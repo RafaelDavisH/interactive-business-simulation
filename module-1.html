@@ -436,7 +436,7 @@
           <div class="card-body">
             <div class="alert alert-info mb-4">
               <div class="alert-title">What is a Problem Hypothesis?</div>
-              <div class="alert-body">A falsifiable statement about who your customer is, what problem they have, and when it occurs. It guides your discovery interviews and can be proven wrong — that's the point.</div>
+              <div class="alert-body">A falsifiable statement about who your customer is, what problem they have, and when it occurs. It guides your discovery interviews and can be proven wrong; that's the point.</div>
             </div>
 
             <div class="hypothesis-statement">
@@ -497,7 +497,7 @@
           <div class="card-body">
             <div class="alert alert-info mb-4">
               <div class="alert-title">What Makes a Good Interview Question</div>
-              <div class="alert-body">Good questions ask about <strong>past behavior and specific events</strong> — not future hypotheticals. They never pitch your idea or lead the respondent toward a particular answer. Unbiased questions surface real problems; leading questions only confirm your assumptions.</div>
+              <div class="alert-body">Good questions ask about <strong>past behavior and specific events</strong>, not future hypotheticals. They never pitch your idea or lead the respondent toward a particular answer. Unbiased questions surface real problems; leading questions only confirm your assumptions.</div>
             </div>
             <div id="questions-list"></div>
           </div>
@@ -542,19 +542,19 @@
               <div class="ms-quiz-options" id="ms-q2-options">
                 <div class="ms-option" data-q2="a" onclick="selectMsQ2(this, 'a')">
                   <span class="ms-option-letter">A</span>
-                  <span>Top-down only — start with the big number and work down</span>
+                  <span>Top-down only: start with the big number and work down</span>
                 </div>
                 <div class="ms-option" data-q2="b" onclick="selectMsQ2(this, 'b')">
                   <span class="ms-option-letter">B</span>
-                  <span>Bottom-up only — count real potential customers and multiply</span>
+                  <span>Bottom-up only: count real potential customers and multiply</span>
                 </div>
                 <div class="ms-option" data-q2="c" onclick="selectMsQ2(this, 'c')">
                   <span class="ms-option-letter">C</span>
-                  <span>Both top-down AND bottom-up combined — triangulate for credibility</span>
+                  <span>Both top-down AND bottom-up combined, triangulating for credibility</span>
                 </div>
                 <div class="ms-option" data-q2="d" onclick="selectMsQ2(this, 'd')">
                   <span class="ms-option-letter">D</span>
-                  <span>Don't size the market — just focus on getting customers</span>
+                  <span>Don't size the market; just focus on getting customers</span>
                 </div>
               </div>
             </div>
@@ -665,7 +665,7 @@ document.addEventListener('DOMContentLoaded', function () {
     foodietrack: {
       question: 'For FoodieTrack, which data point is the strongest evidence that the SAM of $4.2B is credible?',
       options: [
-        { id: 'a', text: 'The global restaurant tech market is $280B — any slice of that is big', correct: false },
+        { id: 'a', text: 'The global restaurant tech market is $280B, so any slice of that is big', correct: false },
         { id: 'b', text: '~420K US restaurants already expressing willingness to adopt SaaS tools (Technavio 2023)', correct: true },
         { id: 'c', text: 'Restaurant owners complain about inventory on Reddit', correct: false },
         { id: 'd', text: 'Toast POS raised $400M in funding', correct: false },
@@ -674,7 +674,7 @@ document.addEventListener('DOMContentLoaded', function () {
     healthbuddy: {
       question: 'For HealthBuddy, which reasoning most credibly justifies the SAM of $3.8B?',
       options: [
-        { id: 'a', text: 'The US aging population is growing every year — the TAM will keep expanding', correct: false },
+        { id: 'a', text: 'The US aging population is growing every year, so the TAM will keep expanding', correct: false },
         { id: 'b', text: '54M Americans are 65+ by 2030, so the whole senior market is addressable', correct: false },
         { id: 'c', text: '~48M adult children of aging parents, 8% are primary digital health coordinators = ~3.8M paying users at ~$96/yr', correct: true },
         { id: 'd', text: 'Health apps generate huge revenue, so HealthBuddy can capture some of it', correct: false },
@@ -683,10 +683,10 @@ document.addEventListener('DOMContentLoaded', function () {
     devcollab: {
       question: 'For DevCollab, which argument best supports the SOM of $8.4M in Year 1?',
       options: [
-        { id: 'a', text: 'The global developer tools market is $25B — $8.4M is a tiny fraction', correct: false },
-        { id: 'b', text: '700 teams × $1,000 ARR = $8.4M — achievable via Product-Led Growth in a developer community', correct: true },
+        { id: 'a', text: 'The global developer tools market is $25B, so $8.4M is a tiny fraction', correct: false },
+        { id: 'b', text: '700 teams × $1,000 ARR = $8.4M, achievable via Product-Led Growth in a developer community', correct: true },
         { id: 'c', text: 'GitHub and GitLab are valued at $25B+ so the market is clearly huge', correct: false },
-        { id: 'd', text: 'Just get 1% of the SAM — that is always achievable for any startup', correct: false },
+        { id: 'd', text: 'Just get 1% of the SAM, which is always achievable for any startup', correct: false },
       ]
     }
   };
@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
         correct: false,
         points: 0,
         title: 'Incomplete Hypothesis',
-        explanation: 'Please fill in all three fields — Target Customer, The Core Problem, and The Situation — with at least 10 characters each. Edit the pre-filled text to customize it for your thinking.'
+        explanation: 'Please fill in all three fields (Target Customer, The Core Problem, and The Situation) with at least 10 characters each. Edit the pre-filled text to customize it for your thinking.'
       });
       return {
         valid: false,
@@ -759,7 +759,7 @@ document.addEventListener('DOMContentLoaded', function () {
         hypothesisContext:  context
       },
       feedbackTitle: 'Hypothesis Written!',
-      explanation: 'Well done — a clear, falsifiable hypothesis focuses your customer interviews. You can refine it after your first 5 conversations.'
+      explanation: 'Well done! A clear, falsifiable hypothesis focuses your customer interviews. You can refine it after your first 5 conversations.'
     };
   }
 
@@ -954,7 +954,7 @@ document.addEventListener('DOMContentLoaded', function () {
       valid: true,
       score: score,
       answers: { marketSizingQ1: msQ1Selected, marketSizingQ2: msQ2Selected },
-      feedbackTitle: correctCount + ' / 2 Correct — ' + score + ' pts',
+      feedbackTitle: correctCount + ' / 2 Correct · ' + score + ' pts',
       explanation: correctCount === 2
         ? 'Excellent market sizing instincts. Bottom-up + top-down triangulation is the gold standard for credible SOM estimates.'
         : 'Remember: investors want a specific, defensible SOM built from real numbers (price × reachable customers), not just TAM × some small %.'

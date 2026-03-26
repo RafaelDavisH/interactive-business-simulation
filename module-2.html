@@ -525,7 +525,7 @@
             </div>
 
             <!-- Theme label -->
-            <div class="interview-theme-label" id="interview-theme">Opening — Understand the Pain</div>
+            <div class="interview-theme-label" id="interview-theme">Opening: Understand the Pain</div>
 
             <!-- Customer statement bubble -->
             <div class="interview-bubble" id="customer-statement">Loading…</div>
@@ -587,7 +587,7 @@
             </div>
 
             <!-- Cards pool -->
-            <div class="pool-label">Customer Insights — drag each card to the right bucket below</div>
+            <div class="pool-label">Customer Insights: drag each card to the right bucket below</div>
             <div class="drag-grid" id="cards-pool" data-bucket-id="pool"></div>
 
             <!-- Drop zones -->
@@ -629,7 +629,7 @@
 
             <div class="alert alert-success mb-4">
               <div class="alert-title">Key Customer Discovery Principles</div>
-              <div class="alert-body">You've completed the core customer discovery activities. The skills you practiced here — listening over pitching, surfacing workarounds, and mapping insights to themes — are what separate companies that build what customers want from those that build what founders assume customers want.</div>
+              <div class="alert-body">You've completed the core customer discovery activities. The skills you practiced here (listening over pitching, surfacing workarounds, and mapping insights to themes) are what separate companies that build what customers want from those that build what founders assume customers want.</div>
             </div>
 
             <div id="summary-insights">
@@ -871,7 +871,7 @@ document.addEventListener('DOMContentLoaded', function () {
       valid: true,
       score: score,
       answers: { interviewRoundsCorrect: totalCorrect, interviewScore: score },
-      feedbackTitle: totalCorrect + ' / 5 Rounds Correct — ' + score + ' pts',
+      feedbackTitle: totalCorrect + ' / 5 Rounds Correct · ' + score + ' pts',
       explanation: totalCorrect >= 4
         ? 'Excellent interviewing instincts! You consistently chose open-ended, past-behavior questions over leading or hypothetical ones.'
         : 'Key principle: always ask about what the customer did last time, not what they would do if something existed. Past behavior reveals real pain; future intent is wishful thinking.'
@@ -960,9 +960,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var explanation;
     if (requiredMiss === 0 && optionalHit === 2) {
-      explanation = 'Perfect! All required AND both bonus criteria selected. This is the complete early adopter profile — acute pain, workarounds, budget, accessibility, honesty, and peer influence.';
+      explanation = 'Perfect! All required AND both bonus criteria selected. This is the complete early adopter profile: acute pain, workarounds, budget, accessibility, honesty, and peer influence.';
     } else if (requiredMiss === 0) {
-      explanation = 'All required criteria selected. The bonus criteria (honest + influential) are worth seeking too — they give you better feedback and help you spread via word of mouth.';
+      explanation = 'All required criteria selected. The bonus criteria (honest + influential) are worth seeking too, as they give you better feedback and help you spread via word of mouth.';
     } else {
       explanation = requiredMiss + ' required criteria missed. ' +
         'Required criteria are non-negotiable: without acute pain, existing workarounds, budget, and accessibility, a customer is not a viable early adopter.';
@@ -976,7 +976,7 @@ document.addEventListener('DOMContentLoaded', function () {
         requiredHit: requiredHit,
         optionalHit: optionalHit
       },
-      feedbackTitle: requiredHit + '/' + required.length + ' Required + ' + optionalHit + '/' + optional.length + ' Bonus — ' + score + ' pts',
+      feedbackTitle: requiredHit + '/' + required.length + ' Required + ' + optionalHit + '/' + optional.length + ' Bonus · ' + score + ' pts',
       explanation: explanation
     };
   }
@@ -1113,7 +1113,7 @@ document.addEventListener('DOMContentLoaded', function () {
       valid: true,
       score: score,
       answers: { affinityCorrect: correct, affinityTotal: cards.length },
-      feedbackTitle: correct + ' / ' + cards.length + ' Correctly Sorted — ' + score + ' pts',
+      feedbackTitle: correct + ' / ' + cards.length + ' Correctly Sorted · ' + score + ' pts',
       explanation: correct >= 7
         ? 'Excellent pattern recognition! You can distinguish problem signals, behavioral workarounds, and motivational drivers in raw customer language.'
         : 'Tip: Problem signals describe friction or failure ("I threw out $400…"). Behavioral patterns describe what the customer actually does ("I call my supplier every Monday…"). Motivations describe goals ("I want to keep food costs under 28%…").'

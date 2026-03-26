@@ -280,7 +280,7 @@
 
         <div class="alert alert-info mb-4 stagger-1">
           <div class="alert-title">The Lean Canvas (Ash Maurya)</div>
-          <div class="alert-body">A startup-optimized business model canvas. Complete each of the 9 blocks for your startup. Pre-filled with your scenario's context — customize as needed to reflect your thinking.</div>
+          <div class="alert-body">A startup-optimized business model canvas. Complete each of the 9 blocks for your startup. Pre-filled with your scenario's context; customize as needed to reflect your thinking.</div>
         </div>
 
         <div class="canvas-grid stagger-2" id="lean-canvas">
@@ -374,7 +374,7 @@
             <div class="form-group mt-4">
               <label class="form-label">Why did you choose this model?</label>
               <textarea class="form-textarea" id="revenue-justification"
-                        placeholder="Explain why this revenue model fits your scenario — consider your price point, sales process, and customer behavior." rows="3"></textarea>
+                        placeholder="Explain why this revenue model fits your scenario. Consider your price point, sales process, and customer behavior." rows="3"></textarea>
               <div class="form-hint">Tip: A 1–2 sentence justification earns partial credit even if your model selection is off.</div>
             </div>
 
@@ -836,7 +836,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var expl    = 'You filled ' + filledCount + ' of 9 blocks with meaningful content. '
       + (correct
         ? 'A well-populated canvas shows a coherent business model at a glance.'
-        : 'Try to fill all 9 blocks — each one forces you to make an explicit assumption you can later test.');
+        : 'Try to fill all 9 blocks; each one forces you to make an explicit assumption you can later test.');
 
     BizSim.showFeedback('feedback-container', {
       correct:     correct,
@@ -902,7 +902,7 @@ document.addEventListener('DOMContentLoaded', function () {
     BizSim.showFeedback('feedback-container', {
       correct:     isCorrect,
       points:      score,
-      title:       isCorrect ? 'Correct Revenue Model!' : 'Not quite — but good thinking.',
+      title:       isCorrect ? 'Correct Revenue Model!' : 'Not quite, but good thinking.',
       explanation: isCorrect
         ? justText
         : 'The optimal model for this scenario is ' + (correctModel ? correctModel.label : correct) + '. ' + justText,
@@ -931,15 +931,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
     var title = isStrong
       ? 'Strong Unit Economics!'
-      : ratio >= 2 ? 'Marginal — Watch Closely'
-      : ratio >= 1 ? 'Weak — Model Needs Work'
+      : ratio >= 2 ? 'Marginal: Watch Closely'
+      : ratio >= 1 ? 'Weak: Model Needs Work'
       : 'Unsustainable Model';
 
     var expl = 'Your LTV:CAC ratio is ' + ratio + ':1. '
       + (isStrong
         ? 'A ratio ≥ 3:1 is the gold standard for SaaS businesses. You\'re spending to acquire customers efficiently.'
         : ratio >= 2
-          ? 'You\'re close — consider increasing ARPU, reducing churn, or lowering CAC to hit the 3:1 target.'
+          ? 'You\'re close. Consider increasing ARPU, reducing churn, or lowering CAC to hit the 3:1 target.'
           : 'A ratio below 2:1 suggests your acquisition costs are eating your margin. Revisit pricing or channel strategy.');
 
     BizSim.showFeedback('feedback-container', {
