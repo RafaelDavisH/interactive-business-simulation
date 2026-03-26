@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizSim — Simulation Results</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+
+  <!-- Inline styles for results-specific elements not in main.css -->
+  <style>
+    /* ─── Results hero ─────────────────────────────────────────── */
+    .results-hero {
+      text-align: center;
+      padding: 48px 0 40px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 32px;
+    }
+    .results-rating-icon {
+      font-size: 56px;
+      margin-bottom: 12px;
+      display: block;
+      line-height: 1;
+      /* subtle drop shadow on emoji for depth */
+      filter: drop-shadow(0 4px 16px rgba(0,0,0,0.4));
+    }
+    .viability-rating {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+      line-height: 1.1;
+    }
+    .viability-label {
+      color: var(--color-text-muted);
+      font-size: 16px;
+      max-width: 480px;
+      margin: 0 auto 24px;
+      line-height: 1.6;
+    }
+    .results-total-score {
+      margin-top: 16px;
+    }
+    .results-score-num {
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--color-primary);
+      font-family: var(--font-mono, monospace);
+      letter-spacing: -2px;
+    }
+    .results-score-label {
+      font-size: 18px;
+      color: var(--color-text-muted);
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ─── Score breakdown ──────────────────────────────────────── */
+    .module-progress-item {
+      margin-bottom: 20px;
+    }
+    .module-progress-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* ─── Badges grid ──────────────────────────────────────────── */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .badge-display {
+      text-align: center;
+      padding: 20px 12px;
+      background: var(--color-surface-2, #263548);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .badge-display.badge-earned {
+      border-color: var(--color-success);
+      box-shadow: 0 0 0 1px var(--color-success), 0 8px 24px rgba(16, 185, 129, 0.12);
+    }
+    .badge-display.badge-earned:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 0 1px var(--color-success), 0 12px 32px rgba(16, 185, 129, 0.2);
+    }
+    .badge-display.badge-locked {
+      opacity: 0.4;
+      filter: grayscale(1);
+    }
+    .badge-display-icon {
+      font-size: 36px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .badge-display-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--color-text);
+    }
+    .badge-display-status {
+      display: flex;
+      justify-content: center;
+    }
+
+    /* ─── Reading list ─────────────────────────────────────────── */
+    .reading-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .reading-item {
+      font-size: 15px;
+      color: var(--color-text-muted);
+      padding: 12px 16px;
+      background: var(--color-surface-2, #263548);
+      border-radius: 8px;
+      border: 1px solid var(--color-border);
+      line-height: 1.5;
+    }
+    .reading-item strong {
+      color: var(--color-text);
+    }
+
+    /* ─── Key decisions ────────────────────────────────────────── */
+    .decision-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    .decision-row:last-child {
+      border-bottom: none;
+    }
+
+    /* ─── Alert variants ───────────────────────────────────────── */
+    .alert {
+      padding: 16px 20px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      margin-bottom: 16px;
+    }
+    .alert:last-child {
+      margin-bottom: 0;
+    }
+    .alert-title {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 6px;
+      color: var(--color-text);
+    }
+    .alert-body {
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--color-text-muted);
+    }
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.08);
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+    .alert-danger .alert-title { color: var(--color-danger); }
+    .alert-warning {
+      background: rgba(245, 158, 11, 0.08);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+    .alert-warning .alert-title { color: var(--color-warning); }
+    .alert-success {
+      background: rgba(16, 185, 129, 0.08);
+      border-color: rgba(16, 185, 129, 0.3);
+    }
+    .alert-success .alert-title { color: var(--color-success); }
+
+    /* ─── Results action bar ───────────────────────────────────── */
+    .results-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding: 40px 0;
+    }
+
+    /* ─── Utility ──────────────────────────────────────────────── */
+    .mb-4 { margin-bottom: 16px; }
+    .mb-2 { margin-bottom: 8px; }
+    .flex-between {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .font-medium { font-weight: 500; }
+    .font-mono { font-family: var(--font-mono, monospace); }
+
+    /* ─── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      .badges-grid { grid-template-columns: repeat(2, 1fr); }
+      .results-actions { flex-direction: column; align-items: stretch; }
+      .results-hero { padding: 32px 0 28px; }
+      .viability-rating { font-size: 32px; }
+      .results-score-num { font-size: 42px; }
+    }
+    @media (max-width: 480px) {
+      .badges-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout-shell">
+
+    <!-- ── SIDEBAR ────────────────────────────────────────────── -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-text">BizSim</div>
+        <div class="logo-tagline">Business Simulation</div>
+      </div>
+
+      <div class="sidebar-scenario-pill" id="sidebar-scenario"></div>
+
+      <nav class="sidebar-nav">
+        <a href="module-1.html" class="sidebar-nav-item done" data-module="1">
+          <span class="nav-icon">✓</span>
+          <span class="nav-label">Problem Validation</span>
+        </a>
+        <a href="module-2.html" class="sidebar-nav-item done" data-module="2">
+          <span class="nav-icon">✓</span>
+          <span class="nav-label">Customer Discovery</span>
+        </a>
+        <a href="module-3.html" class="sidebar-nav-item done" data-module="3">
+          <span class="nav-icon">✓</span>
+          <span class="nav-label">Business Model</span>
+        </a>
+        <a href="module-4.html" class="sidebar-nav-item done" data-module="4">
+          <span class="nav-icon">✓</span>
+          <span class="nav-label">Go-to-Market</span>
+        </a>
+        <div class="sidebar-nav-item active">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Results</span>
+        </div>
+      </nav>
+
+      <div class="sidebar-divider"></div>
+
+      <div class="sidebar-footer">
+        <div class="score-ring-container">
+          <svg class="score-ring" viewBox="0 0 80 80">
+            <circle class="score-ring-track" cx="40" cy="40" r="34" fill="none" stroke-width="6"/>
+            <circle class="score-ring-fill" cx="40" cy="40" r="34" fill="none" stroke-width="6"
+                    stroke-linecap="round" transform="rotate(-90 40 40)"/>
+          </svg>
+          <div class="score-ring-text">
+            <span class="score-ring-num" id="sidebar-score">0</span>
+            <span class="score-ring-denom">/ 100</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ───────────────────────────────────────── -->
+    <main class="main-content">
+      <div class="page-wrapper">
+
+        <!-- VIABILITY RATING HERO -->
+        <div class="results-hero fade-in-up">
+          <span class="results-rating-icon" id="results-icon">🚀</span>
+          <div class="viability-rating" id="viability-rating">—</div>
+          <div class="viability-label" id="viability-label">Loading your results…</div>
+          <div class="results-total-score">
+            <span class="results-score-num" id="total-score-display">0</span>
+            <span class="results-score-label">out of 100 points</span>
+          </div>
+        </div>
+
+        <!-- SCORE BREAKDOWN -->
+        <div class="card fade-in-up stagger-1">
+          <div class="card-header">
+            <div class="card-title">Score Breakdown</div>
+          </div>
+          <div class="card-body" id="score-breakdown">
+            <!-- Populated by JS: 4 module bars -->
+          </div>
+        </div>
+
+        <!-- BADGES EARNED -->
+        <div class="card fade-in-up stagger-2">
+          <div class="card-header">
+            <div class="card-title">Badges Earned</div>
+          </div>
+          <div class="card-body">
+            <div class="badges-grid" id="badges-grid">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- KEY DECISIONS SUMMARY -->
+        <div class="card fade-in-up stagger-3">
+          <div class="card-header">
+            <div class="card-title">Your Key Decisions</div>
+            <div class="card-subtitle">What you chose across each module</div>
+          </div>
+          <div class="card-body" id="decisions-summary">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- RECOMMENDATIONS -->
+        <div class="card fade-in-up stagger-4">
+          <div class="card-header">
+            <div class="card-title">Recommendations</div>
+            <div class="card-subtitle">Based on your simulation performance</div>
+          </div>
+          <div class="card-body" id="recommendations">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+
+        <!-- FURTHER READING -->
+        <div class="card fade-in-up stagger-5">
+          <div class="card-header">
+            <div class="card-title">Go Deeper</div>
+          </div>
+          <div class="card-body">
+            <div class="reading-list">
+              <div class="reading-item">📘 <strong>Customer Interview Principles</strong> · Asking about past behavior, not hypothetical intent, surfaces real pain points</div>
+              <div class="reading-item">📗 <strong>Build-Measure-Learn</strong> · Iterative validation cycles keep you from over-building before finding product-market fit</div>
+              <div class="reading-item">📙 <strong>Positioning Fundamentals</strong> · Clear context-setting — who it's for, what alternatives exist, and why you win — drives conversion</div>
+              <div class="reading-item">📕 <strong>Lean Canvas</strong> · A living one-page business model focused on problem, solution, key metrics, and unfair advantage</div>
+              <div class="reading-item">🌐 <strong>Y Combinator Startup School</strong> · startupschool.org</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="results-actions fade-in-up">
+          <button class="btn btn-primary btn-lg" id="btn-try-different">Try a Different Scenario</button>
+          <button class="btn btn-secondary btn-lg" id="btn-restart-same">Restart Same Scenario</button>
+          <button class="btn btn-ghost" id="btn-reset-all">Reset Everything</button>
+        </div>
+
+      </div><!-- /page-wrapper -->
+    </main>
+  </div><!-- /layout-shell -->
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const state = BizSim.getState();
+
+      // Guard: must have a scenario in state
+      if (!state.scenario) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      // Init sidebar (scenario pill, score ring, nav highlights)
+      BizSim.initSidebar();
+
+      const rating  = BizSim.getViabilityRating();
+      const total   = BizSim.getTotalScore();
+
+      // ── Viability rating hero ──
+      document.getElementById('results-icon').textContent      = rating.icon;
+      document.getElementById('viability-rating').textContent  = rating.label;
+      document.getElementById('viability-rating').className    = `viability-rating text-${rating.color}`;
+      document.getElementById('viability-label').textContent   = rating.description;
+
+      // Animate score counter
+      BizSim.animateScore('total-score-display', total);
+      BizSim.updateHealthRing(total);
+      document.getElementById('sidebar-score').textContent = total;
+
+      // ── Score breakdown bars ──
+      const moduleNames = [
+        'Problem & Market Validation',
+        'Customer Discovery',
+        'Business Model Basics',
+        'Go-to-Market Strategy',
+      ];
+      const maxScores = [25, 25, 25, 25];
+
+      document.getElementById('score-breakdown').innerHTML = moduleNames.map((name, i) => {
+        const mod   = state.modules?.[i + 1] ?? {};
+        const score = mod.score ?? 0;
+        const max   = maxScores[i];
+        const pct   = Math.round((score / max) * 100);
+        const color = pct >= 75 ? 'success' : pct >= 50 ? 'warning' : 'danger';
+
+        return `
+          <div class="module-progress-item">
+            <div class="flex-between mb-2">
+              <span class="text-sm font-medium">Module ${i + 1}: ${name}</span>
+              <span class="font-mono text-${color}">${score} / ${max}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill"
+                   style="width:${pct}%; background: var(--color-${color})"></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // ── Badges earned ──
+      const allBadges  = BizSimData.badges ?? [];
+      const earnedSet  = new Set(state.badges ?? []);
+
+      document.getElementById('badges-grid').innerHTML = allBadges.map(badge => {
+        const earned = earnedSet.has(badge.id);
+        return `
+          <div class="badge-display ${earned ? 'badge-earned' : 'badge-locked'}">
+            <span class="badge-display-icon">${earned ? badge.icon : '🔒'}</span>
+            <div class="badge-display-label">${badge.label}</div>
+            <div class="badge-display-status">
+              ${earned
+                ? '<span class="badge badge-success">Earned</span>'
+                : '<span class="badge badge-neutral">Locked</span>'}
+            </div>
+          </div>`;
+      }).join('');
+
+      // ── Key decisions ──
+      const decisionItems = [];
+
+      const m1ans = state.modules?.[1]?.answers ?? {};
+      const m2ans = state.modules?.[2]?.answers ?? {};
+      const m3ans = state.modules?.[3]?.answers ?? {};
+      const m4ans = state.modules?.[4]?.answers ?? {};
+
+      if (m1ans.smokeTestChoice)
+        decisionItems.push({ module: 'Problem Validation', key: 'Smoke Test',    value: m1ans.smokeTestChoice });
+      if (m2ans.criteriaSelected)
+        decisionItems.push({ module: 'Customer Discovery', key: 'Early Adopter Criteria', value: m2ans.criteriaSelected });
+      if (m3ans.revenueModel)
+        decisionItems.push({ module: 'Business Model',     key: 'Revenue Model', value: m3ans.revenueModel });
+      if (m4ans.gtmMotion)
+        decisionItems.push({ module: 'Go-to-Market',       key: 'GTM Motion',    value: m4ans.gtmMotion });
+
+      const decisionsEl = document.getElementById('decisions-summary');
+      if (decisionItems.length === 0) {
+        decisionsEl.innerHTML = '<p class="text-muted">No major decisions recorded yet.</p>';
+      } else {
+        decisionsEl.innerHTML = decisionItems.map(d => `
+          <div class="decision-row">
+            <span class="badge badge-neutral">${d.module}</span>
+            <span class="text-sm font-medium">${d.key}:</span>
+            <span class="text-sm text-primary">${d.value}</span>
+          </div>`).join('');
+      }
+
+      // ── Recommendations (weakest modules first) ──
+      const recommendations = {
+        1: 'Revisit your problem hypothesis. Run 5 more customer interviews focusing on past behavior, not hypothetical future intent.',
+        2: 'Strengthen your customer discovery. Focus on past behavior questions, not hypothetical future intent. Build a tighter early adopter profile.',
+        3: 'Pressure-test your unit economics. If LTV:CAC < 3, either increase ARPU, reduce churn, or find a lower-cost acquisition channel.',
+        4: 'Refine your go-to-market motion. Make sure your channel choices match where your ICP actually spends time and makes purchasing decisions.',
+      };
+
+      const sortedModules = [1, 2, 3, 4].sort(
+        (a, b) => (state.modules?.[a]?.score ?? 0) - (state.modules?.[b]?.score ?? 0)
+      );
+
+      const recCards = sortedModules
+        .slice(0, 3)
+        .map(modNum => {
+          const score = state.modules?.[modNum]?.score ?? 0;
+          const pct   = score / 25;
+          if (pct >= 0.8) return '';
+          const severity = pct < 0.5 ? 'danger' : 'warning';
+          return `
+            <div class="alert alert-${severity}">
+              <div class="alert-title">Module ${modNum} — ${moduleNames[modNum - 1]}</div>
+              <div class="alert-body">${recommendations[modNum]}</div>
+            </div>`;
+        })
+        .filter(Boolean)
+        .join('');
+
+      document.getElementById('recommendations').innerHTML = recCards ||
+        `<div class="alert alert-success">
+           <div class="alert-title">Excellent work across the board!</div>
+           <div class="alert-body">Your simulation results show strong entrepreneurial thinking. Consider applying these concepts to a real startup idea.</div>
+         </div>`;
+
+      // ── Action buttons ──
+      document.getElementById('btn-try-different').addEventListener('click', () => {
+        BizSim.reset();
+      });
+
+      document.getElementById('btn-restart-same').addEventListener('click', () => {
+        const savedScenario = state.scenario;
+        // Clear progress then set scenario before navigating (reset() navigates
+        // immediately so we handle the redirect ourselves here).
+        try { localStorage.removeItem('bizSim'); } catch(e) {}
+        BizSim.setState({ scenario: savedScenario, started: true });
+        window.location.href = 'module-1.html';
+      });
+
+      document.getElementById('btn-reset-all').addEventListener('click', () => {
+        if (confirm('Reset everything? All progress will be permanently deleted.')) {
+          BizSim.reset();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

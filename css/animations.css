@@ -1,0 +1,773 @@
+/* ==========================================================================
+   BizSim — Animations CSS
+   Micro-Interactions, Transitions & Motion System
+   ========================================================================== */
+
+/* ==========================================================================
+   1. ENTRANCE ANIMATIONS — KEYFRAMES
+   ========================================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* ==========================================================================
+   2. ENTRANCE ANIMATION CLASSES
+   ========================================================================== */
+
+.fade-in-up {
+  animation: fadeInUp 0.4s ease forwards;
+  opacity: 0;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease forwards;
+  opacity: 0;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.35s ease forwards;
+  opacity: 0;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.35s ease forwards;
+  opacity: 0;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+.slide-in-down {
+  animation: slideInDown 0.3s ease forwards;
+  opacity: 0;
+}
+
+
+/* ==========================================================================
+   3. STAGGER DELAYS
+   ========================================================================== */
+
+.stagger-1 { animation-delay: 0.05s; }
+.stagger-2 { animation-delay: 0.10s; }
+.stagger-3 { animation-delay: 0.15s; }
+.stagger-4 { animation-delay: 0.20s; }
+.stagger-5 { animation-delay: 0.25s; }
+.stagger-6 { animation-delay: 0.30s; }
+.stagger-7 { animation-delay: 0.35s; }
+.stagger-8 { animation-delay: 0.40s; }
+
+
+/* ==========================================================================
+   4. SCORE RING DRAW ANIMATION
+   ========================================================================== */
+
+@keyframes drawRing {
+  from {
+    stroke-dashoffset: 251;
+  }
+  to {
+    stroke-dashoffset: var(--ring-offset, 0);
+  }
+}
+
+.score-ring-fill {
+  animation: drawRing 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation-delay: 0.3s;
+}
+
+.score-ring-fill.ring-success { stroke: #10B981; }
+.score-ring-fill.ring-warning { stroke: #F59E0B; }
+.score-ring-fill.ring-danger  { stroke: #EF4444; }
+
+
+/* ==========================================================================
+   5. PULSE — ACTIVE STEP DOT
+   ========================================================================== */
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+  }
+}
+
+.step-dot.active {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.step-dot {
+  transition:
+    background-color 250ms ease,
+    color 250ms ease,
+    box-shadow 250ms ease,
+    transform 200ms ease;
+}
+
+.step-dot.active  { transform: scale(1.1); }
+.step-dot.done    { transform: scale(1); }
+
+
+/* ==========================================================================
+   6. BADGE POP
+   ========================================================================== */
+
+@keyframes badgePop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  60% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.badge-pop {
+  animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* Staggered badge gallery */
+.badge-gallery .earned-badge { opacity: 0; }
+.badge-gallery .earned-badge:nth-child(1) { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.00s forwards; }
+.badge-gallery .earned-badge:nth-child(2) { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.10s forwards; }
+.badge-gallery .earned-badge:nth-child(3) { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.20s forwards; }
+.badge-gallery .earned-badge:nth-child(4) { animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) 0.30s forwards; }
+
+
+/* ==========================================================================
+   7. CONFETTI — CSS-ONLY PARTICLES (10 particles)
+   ========================================================================== */
+
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(60px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.confetti-particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  animation: confetti-fall 0.8s ease-out forwards;
+}
+
+.confetti-particle:nth-child(1)  { background-color: #3B82F6; left: 10%; top: 20%; animation-delay: 0.00s; animation-duration: 0.90s; }
+.confetti-particle:nth-child(2)  { background-color: #10B981; left: 20%; top: 10%; animation-delay: 0.08s; animation-duration: 0.75s; width: 6px; height: 6px; }
+.confetti-particle:nth-child(3)  { background-color: #F59E0B; left: 35%; top: 15%; animation-delay: 0.12s; animation-duration: 1.00s; border-radius: 50%; }
+.confetti-particle:nth-child(4)  { background-color: #EF4444; left: 50%; top:  5%; animation-delay: 0.04s; animation-duration: 0.85s; width: 10px; height: 10px; }
+.confetti-particle:nth-child(5)  { background-color: #8B5CF6; left: 65%; top: 18%; animation-delay: 0.16s; animation-duration: 0.70s; }
+.confetti-particle:nth-child(6)  { background-color: #EC4899; left: 75%; top:  8%; animation-delay: 0.02s; animation-duration: 0.95s; width: 6px; height: 6px; border-radius: 50%; }
+.confetti-particle:nth-child(7)  { background-color: #06B6D4; left: 85%; top: 22%; animation-delay: 0.10s; animation-duration: 0.80s; }
+.confetti-particle:nth-child(8)  { background-color: #F97316; left: 42%; top: 28%; animation-delay: 0.20s; animation-duration: 0.65s; width: 10px; height: 4px; }
+.confetti-particle:nth-child(9)  { background-color: #A3E635; left: 58%; top: 12%; animation-delay: 0.06s; animation-duration: 1.10s; border-radius: 50%; }
+.confetti-particle:nth-child(10) { background-color: #FDE047; left: 28%; top: 25%; animation-delay: 0.14s; animation-duration: 0.78s; width: 7px; height: 7px; }
+
+
+/* ==========================================================================
+   8. TOAST NOTIFICATION
+   ========================================================================== */
+
+@keyframes slideInToast {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToast {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  min-width: 280px;
+  max-width: 380px;
+  background-color: var(--color-surface-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--color-text);
+}
+
+.toast-icon    { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.toast-content { flex: 1; }
+
+.toast-title {
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--color-text);
+  margin-bottom: 2px;
+}
+
+.toast-message {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.toast-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  font-size: 16px;
+  padding: 0;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.toast-close:hover { color: var(--color-text); }
+
+.toast-success { border-left: 3px solid var(--color-success); }
+.toast-warning { border-left: 3px solid var(--color-warning); }
+.toast-danger  { border-left: 3px solid var(--color-danger);  }
+.toast-info    { border-left: 3px solid var(--color-primary); }
+
+.toast.entering { animation: slideInToast 0.3s ease forwards; }
+.toast.leaving  { animation: slideOutToast 0.3s ease forwards; }
+
+.toast-stack {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+
+/* ==========================================================================
+   9. HOVER INTERACTIONS
+   ========================================================================== */
+
+.card-interactive {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.card-interactive:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.btn {
+  transition: all 0.15s ease;
+  will-change: transform;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--shadow-glow-primary);
+}
+
+.scenario-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.motion-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+
+.drag-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, opacity 0.2s ease;
+}
+
+.drop-zone {
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.interview-option {
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.sidebar-nav-item {
+  transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+
+/* ==========================================================================
+   10. RANGE SLIDER FILL (live color feedback via CSS variable)
+   ========================================================================== */
+
+.range-slider {
+  --slider-fill: 50%;
+  background: linear-gradient(
+    to right,
+    var(--color-primary) var(--slider-fill),
+    var(--color-surface-2) var(--slider-fill)
+  );
+  transition: background 0.05s ease;
+}
+
+input[type=range] {
+  --slider-fill: 0%;
+  background: linear-gradient(
+    to right,
+    var(--color-primary) var(--slider-fill),
+    var(--color-surface-2) var(--slider-fill)
+  );
+}
+
+.range-slider:hover::-webkit-slider-thumb {
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.25);
+}
+
+.range-slider:active::-webkit-slider-thumb {
+  transform: scale(1.2);
+  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.2);
+}
+
+
+/* ==========================================================================
+   11. SKELETON / LOADING STATE
+   ========================================================================== */
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface)   25%,
+    var(--color-surface-2) 50%,
+    var(--color-surface)   75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+  color: transparent !important;
+  pointer-events: none;
+  user-select: none;
+}
+
+.skeleton-text      { height: 14px; border-radius: var(--radius-full); margin-bottom: 8px; }
+.skeleton-text.wide  { width: 80%; }
+.skeleton-text.short { width: 40%; }
+.skeleton-title     { height: 24px; width: 45%; border-radius: var(--radius-full); margin-bottom: 12px; }
+.skeleton-card      { height: 120px; border-radius: var(--radius-lg); }
+.skeleton-circle    { border-radius: var(--radius-full) !important; }
+
+
+/* ==========================================================================
+   12. NUMBER COUNTER / SCORE REVEAL
+   ========================================================================== */
+
+@keyframes countUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.count-reveal {
+  animation: countUp 0.5s ease forwards;
+}
+
+@keyframes scoreReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translateY(20px);
+    filter: blur(4px);
+  }
+  60% {
+    transform: scale(1.05) translateY(-4px);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.score-reveal {
+  animation: scoreReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+
+/* ==========================================================================
+   13. MODAL ANIMATIONS
+   ========================================================================== */
+
+@keyframes modalOverlayIn  { from { opacity: 0; } to { opacity: 1; } }
+@keyframes modalOverlayOut { from { opacity: 1; } to { opacity: 0; } }
+
+@keyframes modalBoxIn {
+  from { opacity: 0; transform: scale(0.93) translateY(16px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+@keyframes modalBoxOut {
+  from { opacity: 1; transform: scale(1) translateY(0); }
+  to   { opacity: 0; transform: scale(0.95) translateY(8px); }
+}
+
+.modal-overlay              { animation: modalOverlayIn  0.2s ease forwards; }
+.modal-overlay.closing      { animation: modalOverlayOut 0.2s ease forwards; }
+.modal-box                  { animation: modalBoxIn  0.25s cubic-bezier(0.34, 1.2, 0.64, 1) forwards; }
+.modal-overlay.closing .modal-box { animation: modalBoxOut 0.2s ease forwards; }
+.modal-overlay.active .modal-box  { animation: modalBoxIn 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+
+/* ==========================================================================
+   14. PROGRESS BAR FILL ANIMATION
+   ========================================================================== */
+
+@keyframes progressGrow {
+  from { width: 0%; }
+  to   { width: var(--progress-target, 100%); }
+}
+
+.progress-fill {
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.progress-fill.animate {
+  animation: progressGrow 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+
+/* ==========================================================================
+   15. CORRECT / INCORRECT FEEDBACK FLASH
+   ========================================================================== */
+
+@keyframes flashCorrect {
+  0%   { background-color: transparent; }
+  30%  { background-color: rgba(16, 185, 129, 0.25); }
+  100% { background-color: var(--color-success-glow); }
+}
+
+@keyframes flashIncorrect {
+  0%   { background-color: transparent; }
+  20%  { background-color: rgba(239, 68, 68, 0.35); }
+  50%  { background-color: transparent; }
+  70%  { background-color: rgba(239, 68, 68, 0.25); }
+  100% { background-color: var(--color-danger-glow); }
+}
+
+@keyframes shakeX {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-6px); }
+  40%       { transform: translateX(6px); }
+  60%       { transform: translateX(-4px); }
+  80%       { transform: translateX(4px); }
+}
+
+.flash-correct   { animation: flashCorrect 0.5s ease forwards; }
+.flash-incorrect { animation: flashIncorrect 0.5s ease forwards, shakeX 0.4s ease; }
+
+
+/* ==========================================================================
+   16. DRAG & DROP ANIMATIONS
+   ========================================================================== */
+
+@keyframes dropSuccess {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.04); }
+  100% { transform: scale(1); }
+}
+
+@keyframes itemReturn {
+  from { opacity: 0.5; transform: scale(0.92); }
+  to   { opacity: 1;   transform: scale(1); }
+}
+
+.drag-card.drop-success { animation: dropSuccess  0.3s cubic-bezier(0.34, 1.4, 0.64, 1); }
+.drag-card.item-return  { animation: itemReturn   0.25s ease forwards; }
+
+.drop-zone.highlight {
+  border-color: var(--color-primary);
+  background-color: rgba(59, 130, 246, 0.06);
+}
+
+
+/* ==========================================================================
+   17. PAGE TRANSITION
+   ========================================================================== */
+
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.page-wrapper {
+  animation: pageEnter 0.35s ease forwards;
+}
+
+
+/* ==========================================================================
+   18. BUTTON LOADING STATE
+   ========================================================================== */
+
+@keyframes spinCW {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.btn-loading .btn-label { opacity: 0; }
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spinCW 0.7s linear infinite;
+}
+
+
+/* ==========================================================================
+   19. CARD GRID ENTRANCE STAGGER
+   ========================================================================== */
+
+.card-grid .card {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.card-grid .card:nth-child(1) { animation-delay: 0.00s; }
+.card-grid .card:nth-child(2) { animation-delay: 0.10s; }
+.card-grid .card:nth-child(3) { animation-delay: 0.20s; }
+.card-grid .card:nth-child(4) { animation-delay: 0.30s; }
+.card-grid .card:nth-child(5) { animation-delay: 0.40s; }
+.card-grid .card:nth-child(6) { animation-delay: 0.50s; }
+
+
+/* ==========================================================================
+   20. FEEDBACK PANEL SLIDE DOWN
+   ========================================================================== */
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); max-height: 0; }
+  to   { opacity: 1; transform: translateY(0);     max-height: 600px; }
+}
+
+.feedback-panel.visible { animation: slideDown 0.35s ease forwards; }
+
+
+/* ==========================================================================
+   21. VIABILITY RATING REVEAL (Results page)
+   ========================================================================== */
+
+@keyframes viabilityIn {
+  0%  { opacity: 0; transform: scale(0.5); filter: blur(8px); }
+  70% { transform: scale(1.08); filter: blur(0); }
+  100%{ opacity: 1; transform: scale(1); }
+}
+
+.viability-rating.reveal {
+  animation: viabilityIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+}
+
+
+/* ==========================================================================
+   22. INTERVIEW BUBBLE ENTRANCE
+   ========================================================================== */
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateX(-12px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes bubbleInCustomer {
+  from { opacity: 0; transform: translateX(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.interview-bubble.interviewer.animate { animation: bubbleIn 0.3s ease forwards; }
+.interview-bubble.customer.animate    { animation: bubbleInCustomer 0.3s ease forwards; }
+
+.interview-options.animate .interview-option {
+  opacity: 0;
+  animation: fadeInUp 0.25s ease forwards;
+}
+
+.interview-options.animate .interview-option:nth-child(1) { animation-delay: 0.05s; }
+.interview-options.animate .interview-option:nth-child(2) { animation-delay: 0.10s; }
+.interview-options.animate .interview-option:nth-child(3) { animation-delay: 0.15s; }
+.interview-options.animate .interview-option:nth-child(4) { animation-delay: 0.20s; }
+
+
+/* ==========================================================================
+   23. HOVER GLOW PULSE
+   ========================================================================== */
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 8px rgba(59, 130, 246, 0.2); }
+  50%       { box-shadow: 0 0 20px rgba(59, 130, 246, 0.45); }
+}
+
+.glow-pulse { animation: glowPulse 2.5s ease-in-out infinite; }
+
+.nav-pulse { animation: glowPulse 2s ease-in-out infinite; }
+.nav-pulse:hover { animation: none; }
+
+
+/* ==========================================================================
+   24. SCORE RING HOVER EFFECT
+   ========================================================================== */
+
+.score-ring-container:hover .score-ring-fill {
+  filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
+  transition: filter 0.2s ease;
+}
+
+
+/* ==========================================================================
+   25. REDUCE MOTION — ACCESSIBILITY
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .score-ring-fill {
+    stroke-dashoffset: var(--ring-offset, 0);
+    animation: none;
+    transition: none;
+  }
+
+  .step-dot.active {
+    animation: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+  }
+
+  .skeleton {
+    animation: none;
+    background: var(--color-surface-2);
+  }
+
+  .confetti-particle { display: none; }
+  .page-wrapper { animation: none; }
+}

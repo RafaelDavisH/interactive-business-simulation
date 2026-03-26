@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizSim — Module 2: Customer Discovery</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Module-2 specific styles ─────────────────────────────────── */
+
+    /* Score ring */
+    .score-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .score-ring-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--color-text);
+      line-height: 1;
+    }
+    .score-ring-denom {
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+    .score-ring-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+    }
+
+    /* Sidebar divider */
+    .sidebar-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: 8px 16px;
+    }
+
+    /* Module nav */
+    .module-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 32px;
+      margin-top: 24px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* Step dot overrides */
+    .step-dot--active {
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      transform: scale(1.2);
+    }
+    .step-dot--done {
+      background: var(--color-success) !important;
+      color: #fff !important;
+    }
+    .step-dot--upcoming {
+      background: var(--color-surface-2);
+      color: var(--color-text-muted);
+    }
+
+    /* Score chip */
+    .step-score-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      font-family: var(--font-mono, monospace);
+    }
+
+    /* ── Interview Simulation ──────────────────────────────────────── */
+    .interview-profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 18px;
+      background: var(--color-surface-2);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      border: 1px solid var(--color-border);
+    }
+    .interview-avatar {
+      font-size: 36px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .interview-name {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 1.2;
+    }
+    .interview-role {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .interview-bubble {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 0 var(--radius-lg) var(--radius-lg) var(--radius-lg);
+      padding: 16px 20px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--color-text);
+      margin-bottom: 20px;
+      position: relative;
+      font-style: italic;
+    }
+    .interview-bubble::before {
+      content: '"';
+      font-size: 48px;
+      color: var(--color-primary);
+      opacity: 0.3;
+      position: absolute;
+      top: -6px;
+      left: 14px;
+      line-height: 1;
+      font-family: Georgia, serif;
+    }
+    .interview-theme-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-subtle);
+      margin-bottom: 14px;
+    }
+    .interview-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .interview-option {
+      padding: 14px 18px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1.5;
+      transition: all 0.15s;
+      background: var(--color-surface);
+      color: var(--color-text);
+    }
+    .interview-option:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .interview-option.option-correct {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+      pointer-events: none;
+    }
+    .interview-option.option-incorrect {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+      pointer-events: none;
+    }
+    .interview-option.option-disabled {
+      pointer-events: none;
+      opacity: 0.45;
+    }
+    .round-feedback-box {
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .round-feedback-box.correct {
+      background: var(--color-success-glow);
+      border: 1px solid var(--color-success);
+      color: var(--color-success);
+    }
+    .round-feedback-box.incorrect {
+      background: var(--color-danger-glow);
+      border: 1px solid var(--color-danger);
+      color: var(--color-danger);
+    }
+    .round-feedback-why {
+      color: var(--color-text-muted);
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .btn-next-round {
+      margin-top: 14px;
+    }
+    .round-score-track {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      margin-top: 16px;
+    }
+    .round-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--color-surface-2);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--color-text-muted);
+      transition: all 0.2s;
+    }
+    .round-dot.correct  { background: var(--color-success); border-color: var(--color-success); color: #fff; }
+    .round-dot.incorrect { background: var(--color-danger); border-color: var(--color-danger); color: #fff; }
+    .round-dot.active   { border-color: var(--color-primary); color: var(--color-primary); }
+
+    /* ── Early Adopter Profiler ───────────────────────────────────── */
+    .criteria-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--color-surface);
+      margin-bottom: 10px;
+      user-select: none;
+    }
+    .criteria-item:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .criteria-item.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .criteria-item.graded-correct {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+      pointer-events: none;
+    }
+    .criteria-item.graded-missed {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+      pointer-events: none;
+    }
+    .criteria-item.graded-optional-selected {
+      border-color: var(--color-warning);
+      background: var(--color-warning-glow);
+      pointer-events: none;
+    }
+    .criteria-item.graded-neutral {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+    .criteria-checkbox {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-primary);
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+    .criteria-label {
+      flex: 1;
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--color-text);
+    }
+    .expert-profile-box {
+      margin-top: 20px;
+      padding: 18px 20px;
+      background: var(--color-surface-2);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--color-success);
+    }
+    .expert-profile-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-success);
+      margin-bottom: 8px;
+    }
+
+    /* ── Affinity Mapping ─────────────────────────────────────────── */
+    .drag-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 24px;
+      min-height: 80px;
+    }
+    .drag-card {
+      padding: 12px 14px;
+      background: var(--color-surface-2);
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.4;
+      cursor: grab;
+      transition: all 0.15s;
+      color: var(--color-text);
+    }
+    .drag-card:hover {
+      border-color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+    .drag-card.is-dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      transform: scale(0.97);
+    }
+    .drag-card.placed-correct {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+      cursor: default;
+    }
+    .drag-card.placed-incorrect {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+      cursor: default;
+    }
+    .drag-card-quote {
+      font-style: italic;
+      opacity: 0.9;
+    }
+    .drop-zones {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+    }
+    .drop-zone {
+      min-height: 180px;
+      border: 2px dashed var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      transition: all 0.2s;
+    }
+    .drop-zone.is-over {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .drop-zone-label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--color-border);
+    }
+    .drop-zone-items {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 80px;
+    }
+    .affinity-count {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      margin-top: 8px;
+      font-family: var(--font-mono, monospace);
+    }
+    .pool-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-subtle);
+      margin-bottom: 10px;
+    }
+
+    /* ── Step 4: Summary ──────────────────────────────────────────── */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+    .summary-score-card {
+      padding: 20px;
+      background: var(--color-surface-2);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      text-align: center;
+    }
+    .summary-score-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .summary-score-value {
+      font-size: 40px;
+      font-weight: 800;
+      font-family: var(--font-mono, monospace);
+      color: var(--color-primary);
+      line-height: 1;
+    }
+    .summary-score-denom {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+    .key-insight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--color-surface-2);
+      border-radius: var(--radius-md);
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      border: 1px solid var(--color-border);
+    }
+    .key-insight-icon {
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="layout-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">BizSim</div>
+      <div class="logo-tagline">Business Simulation</div>
+    </div>
+    <div class="sidebar-scenario-pill" id="sidebar-scenario"></div>
+    <nav class="sidebar-nav">
+      <a href="module-1.html" class="sidebar-nav-item done" data-module="1">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Problem Validation</span>
+        <span class="nav-status"></span>
+      </a>
+      <div class="sidebar-nav-item active" data-module="2">
+        <span class="nav-icon">🎙️</span>
+        <span class="nav-label">Customer Discovery</span>
+        <span class="nav-status"></span>
+      </div>
+      <a href="module-3.html" class="sidebar-nav-item locked" data-module="3">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Business Model</span>
+      </a>
+      <a href="module-4.html" class="sidebar-nav-item locked" data-module="4">
+        <span class="nav-icon">📐</span>
+        <span class="nav-label">Go-to-Market</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-footer">
+      <div class="score-ring-container">
+        <svg class="score-ring" viewBox="0 0 80 80">
+          <circle class="score-ring-track" cx="40" cy="40" r="34" fill="none" stroke-width="6"/>
+          <circle class="score-ring-fill" cx="40" cy="40" r="34" fill="none" stroke-width="6"
+            stroke-linecap="round" transform="rotate(-90 40 40)"
+            style="stroke-dasharray:251;stroke-dashoffset:251;stroke:#3B82F6;"/>
+        </svg>
+        <div class="score-ring-text">
+          <span class="score-ring-num" id="sidebar-score">0</span>
+          <span class="score-ring-denom">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="page-wrapper">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header fade-in-up">
+        <div class="page-header-meta">MODULE 2 · CUSTOMER DISCOVERY</div>
+        <h1 class="page-header-title" id="step-title">Customer Interview Simulation</h1>
+        <p class="page-header-subtitle" id="step-subtitle">Practice choosing the best follow-up response in a live customer interview.</p>
+        <div class="step-indicator" id="step-indicator"></div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 1: Interview Simulation
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content fade-in-up" id="step-1">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Customer Interview Simulation</div>
+              <div class="card-subtitle">Choose the best follow-up for each customer statement (2 pts per round)</div>
+            </div>
+            <span class="badge badge-warning">10 pts</span>
+          </div>
+          <div class="card-body">
+            <!-- Customer profile -->
+            <div class="interview-profile">
+              <span class="interview-avatar" id="interview-avatar">👤</span>
+              <div>
+                <div class="interview-name" id="interview-name">Loading…</div>
+                <div class="interview-role" id="interview-role"></div>
+              </div>
+              <div style="margin-left:auto;">
+                <span class="badge badge-neutral">Round <span id="round-num">1</span> of 5</span>
+              </div>
+            </div>
+
+            <!-- Progress bar -->
+            <div class="progress-bar mb-4" style="height:6px;background:var(--color-surface-2);border-radius:99px;">
+              <div class="progress-fill" id="round-progress" style="width:20%;height:100%;background:var(--color-primary);border-radius:99px;transition:width 0.4s ease;"></div>
+            </div>
+
+            <!-- Theme label -->
+            <div class="interview-theme-label" id="interview-theme">Opening — Understand the Pain</div>
+
+            <!-- Customer statement bubble -->
+            <div class="interview-bubble" id="customer-statement">Loading…</div>
+
+            <!-- Response options -->
+            <div class="interview-options" id="response-options"></div>
+
+            <!-- Round feedback -->
+            <div id="round-feedback" class="hidden"></div>
+
+            <!-- Round score tracker dots -->
+            <div class="round-score-track" id="round-dots"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 2: Early Adopter Profiler
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Early Adopter Profiler</div>
+              <div class="card-subtitle">Select all characteristics that define your ideal early customer</div>
+            </div>
+            <span class="badge badge-warning">7 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">What makes an Early Adopter?</div>
+              <div class="alert-body">Early adopters feel the problem acutely <em>right now</em>. They've already tried to solve it (and failed). They're willing to pay, they're reachable, and they'll give you brutal honest feedback. This narrow group is who you build version 1 for.</div>
+            </div>
+            <div id="criteria-list"></div>
+            <div class="expert-profile-box hidden" id="expert-profile-section">
+              <div class="expert-profile-label">Expert Early Adopter Profile for <span id="expert-profile-scenario"></span></div>
+              <p id="expert-profile-text" style="font-size:14px;line-height:1.6;color:var(--color-text-muted);"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 3: Affinity Mapping
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-3">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Affinity Mapping</div>
+              <div class="card-subtitle">Drag each customer insight into the correct theme bucket</div>
+            </div>
+            <span class="badge badge-warning">8 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">Affinity Mapping</div>
+              <div class="alert-body">After a round of customer interviews, you cluster raw quotes into themes. This surfaces patterns that guide product decisions. Drag each card to the bucket that best captures what the customer is expressing.</div>
+            </div>
+
+            <!-- Cards pool -->
+            <div class="pool-label">Customer Insights — drag each card to the right bucket below</div>
+            <div class="drag-grid" id="cards-pool" data-bucket-id="pool"></div>
+
+            <!-- Drop zones -->
+            <div class="drop-zones">
+              <div class="drop-zone" id="drop-problem" data-bucket-id="problem">
+                <div class="drop-zone-label">🔴 Problem Signals</div>
+                <div class="drop-zone-items" id="zone-items-problem"></div>
+                <div class="affinity-count" id="zone-count-problem">0 cards</div>
+              </div>
+              <div class="drop-zone" id="drop-behavior" data-bucket-id="behavior">
+                <div class="drop-zone-label">🟡 Behavioral Patterns</div>
+                <div class="drop-zone-items" id="zone-items-behavior"></div>
+                <div class="affinity-count" id="zone-count-behavior">0 cards</div>
+              </div>
+              <div class="drop-zone" id="drop-motivation" data-bucket-id="motivation">
+                <div class="drop-zone-label">🟢 Motivations &amp; Goals</div>
+                <div class="drop-zone-items" id="zone-items-motivation"></div>
+                <div class="affinity-count" id="zone-count-motivation">0 cards</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 4: Module Summary
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-4">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Discovery Summary</div>
+              <div class="card-subtitle">Review what you learned from your customer discovery work</div>
+            </div>
+            <span class="badge badge-success">Complete</span>
+          </div>
+          <div class="card-body">
+            <div class="summary-grid" id="summary-scores-grid"></div>
+
+            <div class="alert alert-success mb-4">
+              <div class="alert-title">Key Customer Discovery Principles</div>
+              <div class="alert-body">You've completed the core customer discovery activities. The skills you practiced here — listening over pitching, surfacing workarounds, and mapping insights to themes — are what separate companies that build what customers want from those that build what founders assume customers want.</div>
+            </div>
+
+            <div id="summary-insights">
+              <div class="key-insight-item">
+                <span class="key-insight-icon">🎙️</span>
+                <div><strong>Interview quality matters more than quantity.</strong> 5 deep, well-structured interviews beat 50 surveys. Past behavior reveals truth; future intent does not.</div>
+              </div>
+              <div class="key-insight-item">
+                <span class="key-insight-icon">👤</span>
+                <div><strong>Early adopters are not your whole market.</strong> They're the 2–5% with the problem so acute they'll tolerate an imperfect solution. Build for them first.</div>
+              </div>
+              <div class="key-insight-item">
+                <span class="key-insight-icon">🗂️</span>
+                <div><strong>Affinity mapping reveals the signal.</strong> When multiple customers independently express the same theme, you've found a pattern worth designing around.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEEDBACK PANEL -->
+      <div id="feedback-container" class="mt-4"></div>
+
+      <!-- MODULE NAVIGATION -->
+      <div class="module-nav">
+        <button class="btn btn-ghost" id="btn-back">← Back</button>
+        <div class="flex-center gap-4">
+          <span class="step-score-chip hidden" id="step-score-display">Score: 0 pts</span>
+          <button class="btn btn-primary btn-lg" id="btn-next">Check Answer →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════════
+   MODULE 2 — Customer Discovery
+   Complete interactive logic
+══════════════════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Guard ─────────────────────────────────────────────────────────────────
+  var state = BizSim.getState();
+  if (!state.scenario) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (!BizSim.canAccessModule(2)) {
+    BizSim.showToast('Please complete Module 1 first', 'warning');
+    setTimeout(function () { window.location.href = 'module-1.html'; }, 1200);
+    return;
+  }
+
+  BizSim.initSidebar();
+
+  var scenarioId = state.scenario;
+  var data = window.BizSimData;
+  var scenario = BizSim.getScenario();
+
+  // ── Step management ──────────────────────────────────────────────────────
+  var currentStep = 1;
+  var totalSteps  = 4;
+
+  var stepScores   = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  var stepAnswered = { 1: false, 2: false, 3: false, 4: false };
+  var stepAnswers  = { 1: {}, 2: {}, 3: {}, 4: {} };
+
+  var stepTitles = [
+    'Customer Interview Simulation',
+    'Early Adopter Profiler',
+    'Affinity Mapping',
+    'Discovery Summary'
+  ];
+  var stepSubtitles = [
+    'Practice choosing the best follow-up response in a live customer interview.',
+    'Identify the critical characteristics of your ideal early customer.',
+    'Cluster customer insights into themes using affinity mapping.',
+    'Review your customer discovery performance and key takeaways.'
+  ];
+
+  // Initialize saved score from Module 1
+  var m1Score = BizSim.getModuleState(1).score || 0;
+  BizSim.animateScore('sidebar-score', m1Score);
+  BizSim.updateHealthRing(m1Score);
+
+  BizSim.initStepIndicator(totalSteps, 1);
+
+  // ── Step-2 data must be declared before initStep2() runs ─────────────────
+  var criteriaSelected = {}; // id → boolean
+
+  // ── Init all steps ───────────────────────────────────────────────────────
+  initStep1();
+  initStep2();
+  initStep3();
+  initStep4();
+
+  // ── Navigation handlers ──────────────────────────────────────────────────
+  document.getElementById('btn-next').addEventListener('click', handleNext);
+  document.getElementById('btn-back').addEventListener('click', handleBack);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 1: Interview Simulation
+  ───────────────────────────────────────────────────────────────────────── */
+  var currentRound   = 0;
+  var roundResults   = []; // array of booleans
+  var roundAnswered  = false;
+
+  function initStep1() {
+    var profile = data.module2.interviewProfiles[scenarioId];
+    document.getElementById('interview-avatar').textContent = profile.avatar;
+    document.getElementById('interview-name').textContent   = profile.name;
+    document.getElementById('interview-role').textContent   = profile.role;
+
+    // Build round dots
+    var dotsContainer = document.getElementById('round-dots');
+    dotsContainer.innerHTML = '<span style="font-size:12px;color:var(--color-text-subtle);margin-right:4px;">Progress:</span>';
+    for (var i = 0; i < 5; i++) {
+      var dot = document.createElement('div');
+      dot.className = 'round-dot' + (i === 0 ? ' active' : '');
+      dot.id = 'round-dot-' + i;
+      dot.textContent = i + 1;
+      dotsContainer.appendChild(dot);
+    }
+
+    loadRound(0);
+  }
+
+  function loadRound(roundIndex) {
+    var rounds   = data.module2.interviewRounds[scenarioId];
+    var round    = rounds[roundIndex];
+    roundAnswered = false;
+
+    document.getElementById('round-num').textContent      = roundIndex + 1;
+    document.getElementById('round-progress').style.width = ((roundIndex + 1) / 5 * 100) + '%';
+    document.getElementById('interview-theme').textContent = round.theme;
+    document.getElementById('customer-statement').textContent = round.customerStatement;
+
+    // Update active dot
+    for (var i = 0; i < 5; i++) {
+      var dot = document.getElementById('round-dot-' + i);
+      if (dot) {
+        dot.classList.remove('active');
+        if (i === roundIndex) dot.classList.add('active');
+      }
+    }
+
+    // Render options
+    var optContainer = document.getElementById('response-options');
+    optContainer.innerHTML = '';
+    round.options.forEach(function (opt, j) {
+      var div = document.createElement('div');
+      div.className = 'interview-option fade-in-up stagger-' + (j + 1);
+      div.setAttribute('data-round-opt', j);
+      div.textContent = opt.text;
+      div.onclick = function () { answerRound(roundIndex, j, div, round.options); };
+      optContainer.appendChild(div);
+    });
+
+    // Clear feedback
+    var fb = document.getElementById('round-feedback');
+    fb.className = 'hidden';
+    fb.innerHTML = '';
+  }
+
+  function answerRound(roundIndex, optIndex, clickedEl, options) {
+    if (roundAnswered) return;
+    roundAnswered = true;
+
+    var chosen  = options[optIndex];
+    var correct = chosen.correct;
+    roundResults[roundIndex] = correct;
+
+    // Style all options
+    var optEls = document.querySelectorAll('#response-options .interview-option');
+    optEls.forEach(function (el, j) {
+      if (options[j].correct) {
+        el.classList.add('option-correct');
+      } else if (j === optIndex && !correct) {
+        el.classList.add('option-incorrect');
+      } else {
+        el.classList.add('option-disabled');
+      }
+    });
+
+    // Update dot
+    var dot = document.getElementById('round-dot-' + roundIndex);
+    if (dot) {
+      dot.classList.remove('active');
+      dot.classList.add(correct ? 'correct' : 'incorrect');
+    }
+
+    // Show feedback
+    var fb = document.getElementById('round-feedback');
+    fb.className = 'round-feedback-box ' + (correct ? 'correct' : 'incorrect');
+    fb.innerHTML =
+      '<strong>' + (correct ? '✓ Great response!' : '✗ Not the best choice here.') + '</strong>' +
+      '<div class="round-feedback-why">' + escHtml(chosen.why) + '</div>';
+
+    // If not last round, show "Next Round" button
+    if (roundIndex < 4) {
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'btn btn-secondary btn-sm btn-next-round';
+      nextBtn.textContent = 'Next Round →';
+      nextBtn.onclick = function () {
+        currentRound++;
+        loadRound(currentRound);
+      };
+      fb.appendChild(nextBtn);
+      fb.classList.remove('hidden');
+    } else {
+      // All rounds done
+      fb.classList.remove('hidden');
+      var totalCorrect = roundResults.filter(Boolean).length;
+      var summaryDiv = document.createElement('div');
+      summaryDiv.style.marginTop = '12px';
+      summaryDiv.style.fontSize = '14px';
+      summaryDiv.style.color = 'var(--color-text-muted)';
+      summaryDiv.innerHTML = '<strong>Interview complete!</strong> You got <strong>' + totalCorrect + '/5</strong> responses correct. Click "Check Answer" to save your score.';
+      fb.appendChild(summaryDiv);
+
+      // Update btn-next label
+      document.getElementById('btn-next').textContent = 'Save Score →';
+    }
+  }
+
+  function validateInterview() {
+    // Must have answered all 5 rounds
+    if (roundResults.length < 5) {
+      return { valid: false, message: 'Please complete all 5 interview rounds first.' };
+    }
+    var totalCorrect = roundResults.filter(Boolean).length;
+    var score = totalCorrect * 2; // 2 pts per round
+
+    return {
+      valid: true,
+      score: score,
+      answers: { interviewRoundsCorrect: totalCorrect, interviewScore: score },
+      feedbackTitle: totalCorrect + ' / 5 Rounds Correct — ' + score + ' pts',
+      explanation: totalCorrect >= 4
+        ? 'Excellent interviewing instincts! You consistently chose open-ended, past-behavior questions over leading or hypothetical ones.'
+        : 'Key principle: always ask about what the customer did last time, not what they would do if something existed. Past behavior reveals real pain; future intent is wishful thinking.'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 2: Early Adopter Profiler
+  ───────────────────────────────────────────────────────────────────────── */
+  function initStep2() {
+    var criteria = data.module2.earlyAdopterCriteria;
+    var list = document.getElementById('criteria-list');
+    list.innerHTML = '';
+
+    criteria.forEach(function (c) {
+      criteriaSelected[c.id] = false;
+
+      var label = document.createElement('label');
+      label.className = 'criteria-item';
+      label.setAttribute('data-criteria-id', c.id);
+      label.innerHTML =
+        '<input type="checkbox" class="criteria-checkbox" id="crit-' + c.id + '" data-id="' + c.id + '">' +
+        '<span class="criteria-label">' + escHtml(c.label) + '</span>' +
+        '<span class="badge ' + (c.required ? 'badge-danger' : 'badge-neutral') + '" style="flex-shrink:0;margin-left:auto;">' +
+          (c.required ? 'Required' : 'Bonus') +
+        '</span>';
+
+      label.onclick = function (e) {
+        e.preventDefault();
+        toggleCriteria(c.id, label);
+      };
+
+      list.appendChild(label);
+    });
+
+    // Expert profile section
+    document.getElementById('expert-profile-scenario').textContent = scenario ? scenario.name : '';
+    document.getElementById('expert-profile-text').textContent = data.module2.earlyAdopterProfiles[scenarioId];
+  }
+
+  function toggleCriteria(id, labelEl) {
+    criteriaSelected[id] = !criteriaSelected[id];
+    var checkbox = document.getElementById('crit-' + id);
+    if (checkbox) checkbox.checked = criteriaSelected[id];
+
+    if (criteriaSelected[id]) {
+      labelEl.classList.add('selected');
+    } else {
+      labelEl.classList.remove('selected');
+    }
+  }
+
+  function validateEarlyAdopter() {
+    var criteria  = data.module2.earlyAdopterCriteria;
+    var required  = criteria.filter(function (c) { return c.required; });
+    var optional  = criteria.filter(function (c) { return !c.required; });
+
+    var requiredHit  = required.filter(function (c) { return criteriaSelected[c.id]; }).length;
+    var requiredMiss = required.length - requiredHit;
+    var optionalHit  = optional.filter(function (c) { return criteriaSelected[c.id]; }).length;
+
+    // Score: 5 pts for all required, -1 per missed required, +2 bonus for both optional
+    var score = Math.max(0, 5 - requiredMiss);
+    if (optionalHit === 2) score = Math.min(7, score + 2);
+    else if (optionalHit === 1) score = Math.min(7, score + 1);
+
+    // Grade visually
+    criteria.forEach(function (c) {
+      var el = document.querySelector('[data-criteria-id="' + c.id + '"]');
+      if (!el) return;
+      el.style.pointerEvents = 'none'; // lock after submit
+
+      if (c.required && criteriaSelected[c.id]) {
+        el.classList.add('graded-correct');
+      } else if (c.required && !criteriaSelected[c.id]) {
+        el.classList.add('graded-missed');
+      } else if (!c.required && criteriaSelected[c.id]) {
+        el.classList.add('graded-optional-selected');
+      } else {
+        el.classList.add('graded-neutral');
+      }
+    });
+
+    // Show expert profile
+    document.getElementById('expert-profile-section').classList.remove('hidden');
+
+    var explanation;
+    if (requiredMiss === 0 && optionalHit === 2) {
+      explanation = 'Perfect! All required AND both bonus criteria selected. This is the complete early adopter profile — acute pain, workarounds, budget, accessibility, honesty, and peer influence.';
+    } else if (requiredMiss === 0) {
+      explanation = 'All required criteria selected. The bonus criteria (honest + influential) are worth seeking too — they give you better feedback and help you spread via word of mouth.';
+    } else {
+      explanation = requiredMiss + ' required criteria missed. ' +
+        'Required criteria are non-negotiable: without acute pain, existing workarounds, budget, and accessibility, a customer is not a viable early adopter.';
+    }
+
+    return {
+      valid: true,
+      score: score,
+      answers: {
+        criteriaSelected: Object.keys(criteriaSelected).filter(function (k) { return criteriaSelected[k]; }).join(','),
+        requiredHit: requiredHit,
+        optionalHit: optionalHit
+      },
+      feedbackTitle: requiredHit + '/' + required.length + ' Required + ' + optionalHit + '/' + optional.length + ' Bonus — ' + score + ' pts',
+      explanation: explanation
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 3: Affinity Mapping (Drag & Drop)
+  ───────────────────────────────────────────────────────────────────────── */
+  var cardPlacements = {}; // cardId → bucketId placed in
+  var affinityGraded = false;
+
+  function initStep3() {
+    var cards = data.module2.affinityCards[scenarioId];
+    var pool  = document.getElementById('cards-pool');
+    pool.innerHTML = '';
+
+    // Shuffle the cards for variety
+    var shuffled = cards.slice().sort(function () { return Math.random() - 0.5; });
+
+    shuffled.forEach(function (card) {
+      var div = document.createElement('div');
+      div.className = 'drag-card';
+      div.setAttribute('data-card-id', card.id);
+      div.setAttribute('draggable', 'true');
+      div.innerHTML = '<span class="drag-card-quote">' + escHtml(card.text) + '</span>';
+      pool.appendChild(div);
+    });
+
+    // Set up drag events
+    setupDragDrop(cards);
+  }
+
+  function setupDragDrop(cardDefs) {
+    var pool = document.getElementById('cards-pool');
+
+    // Drag start/end on the document level (cards move between zones)
+    document.addEventListener('dragstart', function (e) {
+      var card = e.target.closest('[data-card-id]');
+      if (card) {
+        e.dataTransfer.setData('text/plain', card.dataset.cardId);
+        card.classList.add('is-dragging');
+      }
+    });
+
+    document.addEventListener('dragend', function (e) {
+      var card = e.target.closest('[data-card-id]');
+      if (card) card.classList.remove('is-dragging');
+    });
+
+    // Drop zones
+    var zones = ['pool', 'problem', 'behavior', 'motivation'];
+    zones.forEach(function (bucketId) {
+      var zoneEl = bucketId === 'pool'
+        ? document.getElementById('cards-pool')
+        : document.getElementById('drop-' + bucketId);
+      var itemsEl = bucketId === 'pool'
+        ? document.getElementById('cards-pool')
+        : document.getElementById('zone-items-' + bucketId);
+
+      if (!zoneEl) return;
+
+      zoneEl.addEventListener('dragover', function (e) {
+        e.preventDefault();
+        zoneEl.classList.add('is-over');
+      });
+      zoneEl.addEventListener('dragleave', function () {
+        zoneEl.classList.remove('is-over');
+      });
+      zoneEl.addEventListener('drop', function (e) {
+        e.preventDefault();
+        zoneEl.classList.remove('is-over');
+
+        var cardId = e.dataTransfer.getData('text/plain');
+        if (!cardId) return;
+
+        var cardEl = document.querySelector('[data-card-id="' + cardId + '"]');
+        if (!cardEl) return;
+
+        // Append to the items container of the zone
+        (itemsEl || zoneEl).appendChild(cardEl);
+        cardPlacements[cardId] = bucketId;
+        updateCounts();
+      });
+    });
+  }
+
+  function updateCounts() {
+    ['problem', 'behavior', 'motivation'].forEach(function (bucket) {
+      var items = document.querySelectorAll('#zone-items-' + bucket + ' [data-card-id]');
+      var countEl = document.getElementById('zone-count-' + bucket);
+      if (countEl) countEl.textContent = items.length + ' card' + (items.length !== 1 ? 's' : '');
+    });
+  }
+
+  function validateAffinityMapping() {
+    var cards = data.module2.affinityCards[scenarioId];
+
+    // Check all cards placed
+    var placedCount = Object.keys(cardPlacements).filter(function (id) {
+      return cardPlacements[id] !== 'pool';
+    }).length;
+
+    if (placedCount < cards.length) {
+      return {
+        valid: false,
+        message: 'Please drag all ' + cards.length + ' insight cards into a bucket before checking.'
+      };
+    }
+
+    // Grade
+    var correct = 0;
+    cards.forEach(function (card) {
+      var placed = cardPlacements[card.id];
+      var isCorrect = placed === card.bucket;
+      if (isCorrect) correct++;
+
+      var cardEl = document.querySelector('[data-card-id="' + card.id + '"]');
+      if (cardEl) {
+        cardEl.setAttribute('draggable', 'false');
+        cardEl.style.cursor = 'default';
+        if (isCorrect) {
+          cardEl.classList.add('placed-correct');
+          cardEl.title = '✓ Correct bucket';
+        } else {
+          cardEl.classList.add('placed-incorrect');
+          cardEl.title = '✗ Belongs in: ' + card.bucket;
+        }
+      }
+    });
+
+    affinityGraded = true;
+    var score = Math.round((correct / cards.length) * 8);
+
+    return {
+      valid: true,
+      score: score,
+      answers: { affinityCorrect: correct, affinityTotal: cards.length },
+      feedbackTitle: correct + ' / ' + cards.length + ' Correctly Sorted — ' + score + ' pts',
+      explanation: correct >= 7
+        ? 'Excellent pattern recognition! You can distinguish problem signals, behavioral workarounds, and motivational drivers in raw customer language.'
+        : 'Tip: Problem signals describe friction or failure ("I threw out $400…"). Behavioral patterns describe what the customer actually does ("I call my supplier every Monday…"). Motivations describe goals ("I want to keep food costs under 28%…").'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 4: Summary
+  ───────────────────────────────────────────────────────────────────────── */
+  function initStep4() {
+    // Will be populated when step is shown
+  }
+
+  function buildSummary() {
+    var grid = document.getElementById('summary-scores-grid');
+    var activities = [
+      { label: 'Interview Simulation', score: stepScores[1], max: 10 },
+      { label: 'Early Adopter Profiler', score: stepScores[2], max: 7 },
+      { label: 'Affinity Mapping', score: stepScores[3], max: 8 }
+    ];
+
+    grid.innerHTML = '';
+    activities.forEach(function (act) {
+      var card = document.createElement('div');
+      card.className = 'summary-score-card';
+      card.innerHTML =
+        '<div class="summary-score-label">' + escHtml(act.label) + '</div>' +
+        '<div class="summary-score-value">' + act.score + '</div>' +
+        '<div class="summary-score-denom">/ ' + act.max + ' pts</div>';
+      grid.appendChild(card);
+    });
+
+    var totalCard = document.createElement('div');
+    var total2 = stepScores[1] + stepScores[2] + stepScores[3];
+    totalCard.className = 'summary-score-card';
+    totalCard.style.borderColor = 'var(--color-primary)';
+    totalCard.style.borderWidth = '2px';
+    totalCard.innerHTML =
+      '<div class="summary-score-label" style="color:var(--color-primary);">Module 2 Total</div>' +
+      '<div class="summary-score-value">' + total2 + '</div>' +
+      '<div class="summary-score-denom">/ 25 pts</div>';
+    grid.appendChild(totalCard);
+  }
+
+  function validateSummary() {
+    // Auto-pass the summary step
+    return {
+      valid: true,
+      score: 0,
+      answers: { summaryViewed: true },
+      feedbackTitle: 'Module 2 Complete!',
+      explanation: 'You have completed all Customer Discovery activities. Your insights will inform the Business Model work in Module 3.'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Navigation
+  ───────────────────────────────────────────────────────────────────────── */
+  function handleNext() {
+    if (!stepAnswered[currentStep]) {
+      var result;
+      if (currentStep === 1) result = validateInterview();
+      else if (currentStep === 2) result = validateEarlyAdopter();
+      else if (currentStep === 3) result = validateAffinityMapping();
+      else result = validateSummary();
+
+      if (!result.valid) {
+        BizSim.showToast(result.message, 'warning');
+        return;
+      }
+
+      stepScores[currentStep]   = result.score;
+      stepAnswers[currentStep]  = result.answers;
+      stepAnswered[currentStep] = true;
+
+      // Show feedback (skip for summary step)
+      if (currentStep < 4) {
+        BizSim.showFeedback('feedback-container', {
+          correct:     result.score > 0,
+          points:      result.score,
+          title:       result.feedbackTitle,
+          explanation: result.explanation
+        });
+      }
+
+      // Update score chip
+      var totalSoFar = stepScores[1] + stepScores[2] + stepScores[3];
+      var chip = document.getElementById('step-score-display');
+      chip.textContent = 'Score so far: ' + totalSoFar + ' / 25 pts';
+      chip.classList.remove('hidden');
+
+      // Update sidebar ring
+      var prevTotal = BizSim.getTotalScore();
+      BizSim.animateScore('sidebar-score', prevTotal + totalSoFar);
+      BizSim.updateHealthRing(prevTotal + totalSoFar);
+
+      // Button label
+      if (currentStep < totalSteps) {
+        document.getElementById('btn-next').textContent = 'Next Step →';
+      } else {
+        document.getElementById('btn-next').textContent = 'Complete Module →';
+      }
+
+    } else {
+      if (currentStep < totalSteps) {
+        currentStep++;
+
+        // Build summary when entering step 4
+        if (currentStep === 4) {
+          buildSummary();
+          document.getElementById('btn-next').textContent = 'Complete Module →';
+        }
+
+        showStep(currentStep);
+        document.getElementById('feedback-container').innerHTML = '';
+
+        if (currentStep < totalSteps) {
+          document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Next Step →' : 'Check Answer →';
+        } else {
+          document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Complete Module →' : 'Complete Module →';
+        }
+      } else {
+        // Complete module
+        var totalScore = stepScores[1] + stepScores[2] + stepScores[3];
+        var allAnswers = Object.assign({}, stepAnswers[1], stepAnswers[2], stepAnswers[3]);
+        BizSim.completeModule(2, totalScore, allAnswers);
+        BizSim.showToast('Module 2 complete! You scored ' + totalScore + '/25 pts 🎉', 'success');
+        setTimeout(function () { BizSim.goToNextModule(2); }, 1800);
+      }
+    }
+  }
+
+  function handleBack() {
+    if (currentStep > 1) {
+      currentStep--;
+      showStep(currentStep);
+      document.getElementById('feedback-container').innerHTML = '';
+
+      if (currentStep === 4) {
+        document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Complete Module →' : 'Complete Module →';
+      } else {
+        document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Next Step →' : 'Check Answer →';
+      }
+    } else {
+      window.location.href = 'module-1.html';
+    }
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step-content').forEach(function (el) {
+      el.classList.add('hidden');
+      el.classList.remove('fade-in-up');
+    });
+    var target = document.getElementById('step-' + n);
+    target.classList.remove('hidden');
+    requestAnimationFrame(function () {
+      target.classList.add('fade-in-up');
+    });
+
+    document.getElementById('step-title').textContent    = stepTitles[n - 1];
+    document.getElementById('step-subtitle').textContent = stepSubtitles[n - 1];
+    BizSim.initStepIndicator(totalSteps, n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Utility
+  ───────────────────────────────────────────────────────────────────────── */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>

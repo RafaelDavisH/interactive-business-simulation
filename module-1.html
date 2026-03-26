@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizSim — Module 1: Problem &amp; Market Validation</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Module-1 specific styles ─────────────────────────────────── */
+
+    /* Hypothesis Builder */
+    .hypothesis-statement {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hypothesis-text {
+      color: var(--color-text-muted);
+      font-style: italic;
+      font-size: 15px;
+      padding: 4px 0;
+    }
+
+    /* Question Filter */
+    .question-item {
+      transition: border-color 0.2s, background 0.2s;
+      padding: 16px;
+      margin-bottom: 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface);
+    }
+    .question-num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-subtle);
+      margin-bottom: 6px;
+    }
+    .question-text {
+      font-size: 15px;
+      margin-bottom: 12px;
+      line-height: 1.5;
+      color: var(--color-text);
+    }
+    .question-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .question-item.answered .question-actions button {
+      pointer-events: none;
+    }
+    .question-item.correct-answer {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+    }
+    .question-item.wrong-answer {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+    }
+    .question-explanation {
+      margin-top: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      background: var(--color-surface-2);
+      color: var(--color-text-muted);
+    }
+
+    /* Market Sizing */
+    .market-sizes {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .market-size-card {
+      text-align: center;
+      padding: 20px 16px;
+      background: var(--color-surface-2);
+      border-radius: 12px;
+      border: 1px solid var(--color-border);
+    }
+    .market-size-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .market-size-value {
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--color-primary);
+      font-family: var(--font-mono, monospace);
+    }
+    .market-size-unit {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+    .market-size-reasoning {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    .market-funnel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .market-funnel-arrow {
+      color: var(--color-text-subtle);
+      font-size: 18px;
+    }
+    .ms-quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .ms-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 13px 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--color-surface);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .ms-option:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .ms-option.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .ms-option.option-correct {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+      pointer-events: none;
+    }
+    .ms-option.option-wrong {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+      pointer-events: none;
+    }
+    .ms-option.option-disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .ms-option-letter {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: var(--color-text);
+    }
+    .ms-question-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+
+    /* Smoke Test */
+    .smoke-data-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 20px 0;
+    }
+    .smoke-data-cell {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .smoke-data-key {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      margin-bottom: 4px;
+    }
+    .smoke-data-val {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: var(--font-mono, monospace);
+      color: var(--color-text);
+    }
+    .smoke-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 15px 18px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      margin-bottom: 10px;
+      background: var(--color-surface);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    .smoke-option:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .smoke-option.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .smoke-option.option-correct {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+      pointer-events: none;
+    }
+    .smoke-option.option-wrong {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+      pointer-events: none;
+    }
+    .smoke-option.option-disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
+    .smoke-option-radio {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: all 0.15s;
+    }
+    .smoke-option.selected .smoke-option-radio,
+    .smoke-option.option-correct .smoke-option-radio {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+    }
+    .smoke-option.option-wrong .smoke-option-radio {
+      border-color: var(--color-danger);
+      background: var(--color-danger);
+    }
+
+    /* Hint toggle */
+    .hint-toggle {
+      background: none;
+      border: none;
+      color: var(--color-primary);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .hint-toggle:hover {
+      opacity: 0.8;
+    }
+
+    /* Score display chip */
+    .step-score-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-full);
+      padding: 4px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      font-family: var(--font-mono, monospace);
+    }
+
+    /* Score ring text fix */
+    .score-ring-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    .score-ring-num {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--color-text);
+      line-height: 1;
+    }
+    .score-ring-denom {
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+    .score-ring-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+      margin: 0 auto;
+    }
+
+    /* Module nav */
+    .module-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 0 32px;
+      margin-top: 24px;
+      border-top: 1px solid var(--color-border);
+    }
+
+    /* Step dot custom styles */
+    .step-dot--active {
+      background: var(--color-primary) !important;
+      color: #fff !important;
+      transform: scale(1.2);
+    }
+    .step-dot--done {
+      background: var(--color-success) !important;
+      color: #fff !important;
+    }
+    .step-dot--upcoming {
+      background: var(--color-surface-2);
+      color: var(--color-text-muted);
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--color-border);
+      margin: 8px 16px;
+    }
+
+    /* card interactive focus */
+    .card-interactive:hover {
+      border-color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+<div class="layout-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">BizSim</div>
+      <div class="logo-tagline">Business Simulation</div>
+    </div>
+    <div class="sidebar-scenario-pill" id="sidebar-scenario"></div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-nav-item active" data-module="1">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Problem Validation</span>
+        <span class="nav-status"></span>
+      </div>
+      <a href="module-2.html" class="sidebar-nav-item locked" data-module="2">
+        <span class="nav-icon">🎙️</span>
+        <span class="nav-label">Customer Discovery</span>
+      </a>
+      <a href="module-3.html" class="sidebar-nav-item locked" data-module="3">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Business Model</span>
+      </a>
+      <a href="module-4.html" class="sidebar-nav-item locked" data-module="4">
+        <span class="nav-icon">📐</span>
+        <span class="nav-label">Go-to-Market</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-footer">
+      <div class="score-ring-container">
+        <svg class="score-ring" viewBox="0 0 80 80">
+          <circle class="score-ring-track" cx="40" cy="40" r="34" fill="none" stroke-width="6"/>
+          <circle class="score-ring-fill" cx="40" cy="40" r="34" fill="none" stroke-width="6"
+            stroke-linecap="round" transform="rotate(-90 40 40)"
+            style="stroke-dasharray:251;stroke-dashoffset:251;stroke:#3B82F6;"/>
+        </svg>
+        <div class="score-ring-text">
+          <span class="score-ring-num" id="sidebar-score">0</span>
+          <span class="score-ring-denom">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="page-wrapper">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header fade-in-up">
+        <div class="page-header-meta">MODULE 1 · PROBLEM &amp; MARKET VALIDATION</div>
+        <h1 class="page-header-title" id="step-title">Hypothesis Builder</h1>
+        <p class="page-header-subtitle" id="step-subtitle">Define your core problem hypothesis before talking to customers.</p>
+        <div class="step-indicator" id="step-indicator"></div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 1: Hypothesis Builder
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content fade-in-up" id="step-1">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Write Your Problem Hypothesis</div>
+              <div class="card-subtitle">Complete this template based on your startup scenario</div>
+            </div>
+            <span class="badge badge-warning">5 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">What is a Problem Hypothesis?</div>
+              <div class="alert-body">A falsifiable statement about who your customer is, what problem they have, and when it occurs. It guides your discovery interviews and can be proven wrong — that's the point.</div>
+            </div>
+
+            <div class="hypothesis-statement">
+              <span class="hypothesis-text">"I believe that…"</span>
+
+              <div class="form-group">
+                <label class="form-label" for="hyp-customer">Target Customer</label>
+                <input type="text" class="form-input" id="hyp-customer"
+                  placeholder="e.g., independent restaurant owners (10–50 seats)…">
+                <div class="form-hint">Who specifically experiences this problem?</div>
+              </div>
+
+              <span class="hypothesis-text">"…struggles with…"</span>
+
+              <div class="form-group">
+                <label class="form-label" for="hyp-problem">The Core Problem</label>
+                <textarea class="form-textarea" id="hyp-problem" rows="3"
+                  placeholder="describe the core pain in concrete terms…"></textarea>
+                <div class="form-hint">What is the specific friction or failure mode?</div>
+              </div>
+
+              <span class="hypothesis-text">"…when…"</span>
+
+              <div class="form-group">
+                <label class="form-label" for="hyp-context">The Situation / Context</label>
+                <input type="text" class="form-input" id="hyp-context"
+                  placeholder="describe when and where the problem occurs…">
+                <div class="form-hint">Under what circumstances does the problem happen?</div>
+              </div>
+
+              <span class="hypothesis-text">"."</span>
+            </div>
+
+            <div class="mt-4" style="display:flex;align-items:center;gap:10px;">
+              <button class="hint-toggle" id="hint-toggle-btn" onclick="toggleHint()">💡 Need a hint?</button>
+            </div>
+
+            <div class="alert alert-info mt-4 hidden" id="hyp-hint-box">
+              <div class="alert-title">Scenario Template Hint</div>
+              <div class="alert-body" id="hyp-hint-text"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 2: Interview Question Filter
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Interview Question Filter</div>
+              <div class="card-subtitle">Mark each question as Valid (open-ended, unbiased) or Leading (biased)</div>
+            </div>
+            <span class="badge badge-warning">8 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">What Makes a Good Interview Question</div>
+              <div class="alert-body">Good questions ask about <strong>past behavior and specific events</strong> — not future hypotheticals. They never pitch your idea or lead the respondent toward a particular answer. Unbiased questions surface real problems; leading questions only confirm your assumptions.</div>
+            </div>
+            <div id="questions-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 3: Market Sizing
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-3">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Market Sizing</div>
+              <div class="card-subtitle">Understand the TAM → SAM → SOM framework for your scenario</div>
+            </div>
+            <span class="badge badge-warning">7 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">TAM → SAM → SOM Framework</div>
+              <div class="alert-body">
+                <strong>TAM</strong> (Total Addressable Market) = entire market if 100% captured. &nbsp;
+                <strong>SAM</strong> (Serviceable Addressable Market) = segment you can realistically target. &nbsp;
+                <strong>SOM</strong> (Serviceable Obtainable Market) = realistic near-term capture. Investors care most about <em>how</em> you derived SOM.
+              </div>
+            </div>
+
+            <!-- Market size display -->
+            <div class="market-sizes" id="market-sizes-display"></div>
+
+            <!-- Quiz section -->
+            <div style="margin-top:24px;">
+              <div class="ms-question-label">Question 1 of 2</div>
+              <p style="font-size:15px;line-height:1.6;margin-bottom:12px;" id="ms-q1-text"></p>
+              <div class="ms-quiz-options" id="ms-q1-options"></div>
+            </div>
+
+            <div style="margin-top:24px;" id="ms-q2-section">
+              <div class="ms-question-label">Question 2 of 2</div>
+              <p style="font-size:15px;line-height:1.6;margin-bottom:12px;">Which market sizing approach is most reliable for early-stage startups?</p>
+              <div class="ms-quiz-options" id="ms-q2-options">
+                <div class="ms-option" data-q2="a" onclick="selectMsQ2(this, 'a')">
+                  <span class="ms-option-letter">A</span>
+                  <span>Top-down only — start with the big number and work down</span>
+                </div>
+                <div class="ms-option" data-q2="b" onclick="selectMsQ2(this, 'b')">
+                  <span class="ms-option-letter">B</span>
+                  <span>Bottom-up only — count real potential customers and multiply</span>
+                </div>
+                <div class="ms-option" data-q2="c" onclick="selectMsQ2(this, 'c')">
+                  <span class="ms-option-letter">C</span>
+                  <span>Both top-down AND bottom-up combined — triangulate for credibility</span>
+                </div>
+                <div class="ms-option" data-q2="d" onclick="selectMsQ2(this, 'd')">
+                  <span class="ms-option-letter">D</span>
+                  <span>Don't size the market — just focus on getting customers</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════════════════════════
+           STEP 4: Smoke Test Decision
+      ═══════════════════════════════════════════════════════════ -->
+      <div class="step-content hidden" id="step-4">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Smoke Test Decision</div>
+              <div class="card-subtitle">Analyze the results and decide your next move</div>
+            </div>
+            <span class="badge badge-warning">5 pts</span>
+          </div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">What is a Smoke Test?</div>
+              <div class="alert-body">A smoke test (or "fake door" test) measures real customer interest before building anything. A landing page + ad campaign can validate demand in days, not months. Key metric: email capture rate above 5% is a strong signal.</div>
+            </div>
+
+            <!-- Scenario description -->
+            <div style="padding:16px;background:var(--color-surface-2);border-radius:var(--radius-md);border:1px solid var(--color-border);margin-bottom:20px;">
+              <div class="card-subtitle" style="margin-bottom:8px;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;">The Experiment</div>
+              <p id="smoke-scenario-text" style="font-size:14px;line-height:1.6;color:var(--color-text);"></p>
+            </div>
+
+            <!-- Data grid -->
+            <div class="smoke-data-grid" id="smoke-data-grid"></div>
+
+            <!-- Options -->
+            <div style="margin-top:20px;">
+              <div class="ms-question-label" style="margin-bottom:12px;">What should you do next?</div>
+              <div id="smoke-options"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FEEDBACK PANEL -->
+      <div id="feedback-container" class="mt-4"></div>
+
+      <!-- MODULE NAVIGATION -->
+      <div class="module-nav">
+        <button class="btn btn-ghost" id="btn-back">← Back</button>
+        <div class="flex-center gap-4">
+          <span class="step-score-chip hidden" id="step-score-display">Score: 0 pts</span>
+          <button class="btn btn-primary btn-lg" id="btn-next">Check Answer →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════════
+   MODULE 1 — Problem & Market Validation
+   Complete interactive logic
+══════════════════════════════════════════════════════════════════════════════ */
+document.addEventListener('DOMContentLoaded', function () {
+
+  // ── Guard: scenario must be set ──────────────────────────────────────────
+  var state = BizSim.getState();
+  if (!state.scenario) {
+    window.location.href = 'index.html';
+    return;
+  }
+
+  BizSim.initSidebar();
+
+  var scenarioId = state.scenario;
+  var data = window.BizSimData;
+
+  // ── Step management ──────────────────────────────────────────────────────
+  var currentStep = 1;
+  var totalSteps  = 4;
+
+  var stepScores   = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  var stepAnswered = { 1: false, 2: false, 3: false, 4: false };
+  var stepAnswers  = { 1: {}, 2: {}, 3: {}, 4: {} };
+
+  var stepTitles = [
+    'Hypothesis Builder',
+    'Interview Question Filter',
+    'Market Sizing',
+    'Smoke Test Decision'
+  ];
+  var stepSubtitles = [
+    'Define your core problem hypothesis before talking to customers.',
+    'Identify which interview questions are open-ended, unbiased, and focused on past behavior.',
+    'Understand the size of your target market.',
+    'Analyze smoke test results and decide your next move.'
+  ];
+
+  BizSim.initStepIndicator(totalSteps, 1);
+
+  // ── Step-3 data must be declared before initStep3() runs ─────────────────
+  var msQ1Selected = null;
+  var msQ2Selected = null;
+  var msQ1Data = {
+    foodietrack: {
+      question: 'For FoodieTrack, which data point is the strongest evidence that the SAM of $4.2B is credible?',
+      options: [
+        { id: 'a', text: 'The global restaurant tech market is $280B — any slice of that is big', correct: false },
+        { id: 'b', text: '~420K US restaurants already expressing willingness to adopt SaaS tools (Technavio 2023)', correct: true },
+        { id: 'c', text: 'Restaurant owners complain about inventory on Reddit', correct: false },
+        { id: 'd', text: 'Toast POS raised $400M in funding', correct: false },
+      ]
+    },
+    healthbuddy: {
+      question: 'For HealthBuddy, which reasoning most credibly justifies the SAM of $3.8B?',
+      options: [
+        { id: 'a', text: 'The US aging population is growing every year — the TAM will keep expanding', correct: false },
+        { id: 'b', text: '54M Americans are 65+ by 2030, so the whole senior market is addressable', correct: false },
+        { id: 'c', text: '~48M adult children of aging parents, 8% are primary digital health coordinators = ~3.8M paying users at ~$96/yr', correct: true },
+        { id: 'd', text: 'Health apps generate huge revenue, so HealthBuddy can capture some of it', correct: false },
+      ]
+    },
+    devcollab: {
+      question: 'For DevCollab, which argument best supports the SOM of $8.4M in Year 1?',
+      options: [
+        { id: 'a', text: 'The global developer tools market is $25B — $8.4M is a tiny fraction', correct: false },
+        { id: 'b', text: '700 teams × $1,000 ARR = $8.4M — achievable via Product-Led Growth in a developer community', correct: true },
+        { id: 'c', text: 'GitHub and GitLab are valued at $25B+ so the market is clearly huge', correct: false },
+        { id: 'd', text: 'Just get 1% of the SAM — that is always achievable for any startup', correct: false },
+      ]
+    }
+  };
+  var smokeSelected = null;
+  var questionAnswers = {};
+
+  // ── Init all steps ───────────────────────────────────────────────────────
+  initStep1();
+  initStep2();
+  initStep3();
+  initStep4();
+
+  // ── Navigation handlers ──────────────────────────────────────────────────
+  document.getElementById('btn-next').addEventListener('click', handleNext);
+  document.getElementById('btn-back').addEventListener('click', handleBack);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 1: Hypothesis Builder
+  ───────────────────────────────────────────────────────────────────────── */
+  function initStep1() {
+    var tmpl = data.module1.hypothesisTemplates[scenarioId];
+    if (!tmpl) return;
+
+    // Pre-fill the form fields with scenario template data
+    document.getElementById('hyp-customer').value = tmpl.customer;
+    document.getElementById('hyp-problem').value  = tmpl.problem;
+    document.getElementById('hyp-context').value  = tmpl.context;
+
+    // Pre-fill hint (same info, for reference)
+    document.getElementById('hyp-hint-text').textContent =
+      'Customer: "' + tmpl.customer + '" · Problem: "' + tmpl.problem + '" · Context: "' + tmpl.context + '"';
+  }
+
+  window.toggleHint = function () {
+    var box = document.getElementById('hyp-hint-box');
+    var btn = document.getElementById('hint-toggle-btn');
+    if (box.classList.contains('hidden')) {
+      box.classList.remove('hidden');
+      btn.textContent = '💡 Hide hint';
+    } else {
+      box.classList.add('hidden');
+      btn.textContent = '💡 Need a hint?';
+    }
+  };
+
+  function validateHypothesis() {
+    var customer = document.getElementById('hyp-customer').value.trim();
+    var problem  = document.getElementById('hyp-problem').value.trim();
+    var context  = document.getElementById('hyp-context').value.trim();
+
+    if (customer.length < 10 || problem.length < 10 || context.length < 10) {
+      // Also show inline warning so it's impossible to miss
+      BizSim.showFeedback('feedback-container', {
+        correct: false,
+        points: 0,
+        title: 'Incomplete Hypothesis',
+        explanation: 'Please fill in all three fields — Target Customer, The Core Problem, and The Situation — with at least 10 characters each. Edit the pre-filled text to customize it for your thinking.'
+      });
+      return {
+        valid: false,
+        message: 'Please fill in all three hypothesis fields.'
+      };
+    }
+    return {
+      valid: true,
+      score: 5,
+      answers: {
+        hypothesisCustomer: customer,
+        hypothesisProblem:  problem,
+        hypothesisContext:  context
+      },
+      feedbackTitle: 'Hypothesis Written!',
+      explanation: 'Well done — a clear, falsifiable hypothesis focuses your customer interviews. You can refine it after your first 5 conversations.'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 2: Interview Question Filter
+  ───────────────────────────────────────────────────────────────────────── */
+  var questionAnswers = {}; // index → 'valid' | 'leading'
+
+  function initStep2() {
+    var questions = data.module1.interviewQuestions;
+    var list = document.getElementById('questions-list');
+    list.innerHTML = '';
+
+    questions.forEach(function (q, i) {
+      var div = document.createElement('div');
+      div.className = 'question-item';
+      div.id = 'q-item-' + i;
+      div.innerHTML =
+        '<div class="question-num">Question ' + (i + 1) + ' of ' + questions.length + '</div>' +
+        '<div class="question-text">' + escHtml(q.text) + '</div>' +
+        '<div class="question-actions">' +
+          '<button class="tag-btn" onclick="answerQuestion(' + i + ',\'valid\')" id="qbtn-valid-' + i + '">✓ Valid</button>' +
+          '<button class="tag-btn" onclick="answerQuestion(' + i + ',\'leading\')" id="qbtn-leading-' + i + '">⚠ Leading</button>' +
+        '</div>' +
+        '<div class="question-explanation hidden" id="q-exp-' + i + '"></div>';
+      list.appendChild(div);
+    });
+  }
+
+  window.answerQuestion = function (index, answer) {
+    questionAnswers[index] = answer;
+
+    var btnValid   = document.getElementById('qbtn-valid-' + index);
+    var btnLeading = document.getElementById('qbtn-leading-' + index);
+
+    if (answer === 'valid') {
+      btnValid.classList.add('active');
+      btnLeading.classList.remove('active');
+    } else {
+      btnLeading.classList.add('active');
+      btnValid.classList.remove('active');
+    }
+  };
+
+  function validateInterviewFilter() {
+    var questions = data.module1.interviewQuestions;
+
+    // Check all 8 answered
+    if (Object.keys(questionAnswers).length < questions.length) {
+      return {
+        valid: false,
+        message: 'Please answer all ' + questions.length + ' questions before checking.'
+      };
+    }
+
+    var correct = 0;
+    questions.forEach(function (q, i) {
+      var correctAnswer = q.isLeading ? 'leading' : 'valid';
+      var item = document.getElementById('q-item-' + i);
+      var exp  = document.getElementById('q-exp-' + i);
+
+      item.classList.add('answered');
+
+      if (questionAnswers[i] === correctAnswer) {
+        correct++;
+        item.classList.add('correct-answer');
+        exp.textContent = '✓ ' + q.explanation;
+        exp.classList.remove('hidden');
+        exp.style.borderLeft = '3px solid var(--color-success)';
+      } else {
+        item.classList.add('wrong-answer');
+        exp.textContent = '✗ ' + q.explanation;
+        exp.classList.remove('hidden');
+        exp.style.borderLeft = '3px solid var(--color-danger)';
+      }
+    });
+
+    var score = Math.round((correct / questions.length) * 8);
+    return {
+      valid: true,
+      score: score,
+      answers: { interviewFilterScore: correct + '/' + questions.length },
+      feedbackTitle: correct + ' / ' + questions.length + ' Correct',
+      explanation: correct >= 6
+        ? 'Strong interview instincts! You can consistently spot biased and leading questions.'
+        : 'Review the explanations above. The key tell: if a question can be answered with "yes" or suggests a solution, it\'s leading.'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 3: Market Sizing Quiz
+  ───────────────────────────────────────────────────────────────────────── */
+  function initStep3() {
+    var sizing = data.module1.marketSizing[scenarioId];
+    var display = document.getElementById('market-sizes-display');
+
+    // Funnel visual + market cards
+    display.innerHTML =
+      '<div class="market-size-card">' +
+        '<div class="market-size-label">TAM — Total Addressable</div>' +
+        '<div class="market-size-value">$' + sizing.tam.value + sizing.tam.unit + '</div>' +
+        '<div class="market-size-unit">' + escHtml(sizing.tam.label) + '</div>' +
+        '<div class="market-size-reasoning">' + escHtml(sizing.tamReasoning) + '</div>' +
+      '</div>' +
+      '<div class="market-size-card" style="border-color:var(--color-warning);border-width:2px;">' +
+        '<div class="market-size-label" style="color:var(--color-warning);">SAM — Serviceable</div>' +
+        '<div class="market-size-value" style="color:var(--color-warning);">$' + sizing.sam.value + sizing.sam.unit + '</div>' +
+        '<div class="market-size-unit">' + escHtml(sizing.sam.label) + '</div>' +
+        '<div class="market-size-reasoning">' + escHtml(sizing.samReasoning) + '</div>' +
+      '</div>' +
+      '<div class="market-size-card" style="border-color:var(--color-success);border-width:2px;">' +
+        '<div class="market-size-label" style="color:var(--color-success);">SOM — Obtainable</div>' +
+        '<div class="market-size-value" style="color:var(--color-success);">$' + sizing.som.value + sizing.som.unit + '</div>' +
+        '<div class="market-size-unit">' + escHtml(sizing.som.label) + '</div>' +
+        '<div class="market-size-reasoning">' + escHtml(sizing.somReasoning) + '</div>' +
+      '</div>';
+
+    // Q1 setup
+    var q1 = msQ1Data[scenarioId];
+    document.getElementById('ms-q1-text').textContent = q1.question;
+
+    var q1Container = document.getElementById('ms-q1-options');
+    q1Container.innerHTML = '';
+    q1.options.forEach(function (opt) {
+      var btn = document.createElement('div');
+      btn.className = 'ms-option';
+      btn.setAttribute('data-q1', opt.id);
+      btn.innerHTML = '<span class="ms-option-letter">' + opt.id.toUpperCase() + '</span><span>' + escHtml(opt.text) + '</span>';
+      btn.onclick = function () { selectMsQ1(btn, opt.id); };
+      q1Container.appendChild(btn);
+    });
+  }
+
+  window.selectMsQ1 = function (el, id) {
+    msQ1Selected = id;
+    document.querySelectorAll('#ms-q1-options .ms-option').forEach(function (o) {
+      o.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  };
+
+  window.selectMsQ2 = function (el, id) {
+    msQ2Selected = id;
+    document.querySelectorAll('#ms-q2-options .ms-option').forEach(function (o) {
+      o.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  };
+
+  function validateMarketSizing() {
+    if (!msQ1Selected || !msQ2Selected) {
+      return {
+        valid: false,
+        message: 'Please answer both questions before checking.'
+      };
+    }
+
+    var q1Data = msQ1Data[scenarioId];
+    var q1Correct = q1Data.options.find(function (o) { return o.correct; });
+    var q1Pass = msQ1Selected === q1Correct.id;
+    var q2Pass = msQ2Selected === 'c'; // correct answer is always C
+
+    // Highlight Q1
+    document.querySelectorAll('#ms-q1-options .ms-option').forEach(function (opt) {
+      var id = opt.getAttribute('data-q1');
+      var isCorrect = q1Data.options.find(function (o) { return o.id === id && o.correct; });
+      if (isCorrect) {
+        opt.classList.add('option-correct');
+      } else if (id === msQ1Selected && !q1Pass) {
+        opt.classList.add('option-wrong');
+      } else {
+        opt.classList.add('option-disabled');
+      }
+    });
+
+    // Highlight Q2
+    document.querySelectorAll('#ms-q2-options .ms-option').forEach(function (opt) {
+      var id = opt.getAttribute('data-q2');
+      if (id === 'c') {
+        opt.classList.add('option-correct');
+      } else if (id === msQ2Selected && !q2Pass) {
+        opt.classList.add('option-wrong');
+      } else {
+        opt.classList.add('option-disabled');
+      }
+    });
+
+    var correctCount = (q1Pass ? 1 : 0) + (q2Pass ? 1 : 0);
+    var score = correctCount === 2 ? 7 : correctCount === 1 ? 4 : 0;
+
+    return {
+      valid: true,
+      score: score,
+      answers: { marketSizingQ1: msQ1Selected, marketSizingQ2: msQ2Selected },
+      feedbackTitle: correctCount + ' / 2 Correct — ' + score + ' pts',
+      explanation: correctCount === 2
+        ? 'Excellent market sizing instincts. Bottom-up + top-down triangulation is the gold standard for credible SOM estimates.'
+        : 'Remember: investors want a specific, defensible SOM built from real numbers (price × reachable customers), not just TAM × some small %.'
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     STEP 4: Smoke Test Decision
+  ───────────────────────────────────────────────────────────────────────── */
+  var smokeSelected = null;
+
+  function initStep4() {
+    var st = data.module1.smokeTests[scenarioId];
+
+    document.getElementById('smoke-scenario-text').textContent = st.scenario;
+
+    // Data grid
+    var grid = document.getElementById('smoke-data-grid');
+    grid.innerHTML = '';
+    Object.keys(st.data).forEach(function (key) {
+      var cell = document.createElement('div');
+      cell.className = 'smoke-data-cell';
+      cell.innerHTML =
+        '<div class="smoke-data-key">' + escHtml(key) + '</div>' +
+        '<div class="smoke-data-val">' + escHtml(st.data[key]) + '</div>';
+      grid.appendChild(cell);
+    });
+
+    // Options
+    var optContainer = document.getElementById('smoke-options');
+    optContainer.innerHTML = '';
+    st.options.forEach(function (opt) {
+      var div = document.createElement('div');
+      div.className = 'smoke-option';
+      div.setAttribute('data-smoke', opt.id);
+      div.innerHTML =
+        '<div class="smoke-option-radio"></div>' +
+        '<span>' + escHtml(opt.label) + '</span>';
+      div.onclick = function () { selectSmoke(div, opt.id); };
+      optContainer.appendChild(div);
+    });
+  }
+
+  window.selectSmoke = function (el, id) {
+    smokeSelected = id;
+    document.querySelectorAll('.smoke-option').forEach(function (o) {
+      o.classList.remove('selected');
+    });
+    el.classList.add('selected');
+  };
+
+  function validateSmokeTest() {
+    if (!smokeSelected) {
+      return { valid: false, message: 'Please select an option before checking.' };
+    }
+
+    var st = data.module1.smokeTests[scenarioId];
+    var correctOpt = st.options.find(function (o) { return o.correct; });
+    var isCorrect = smokeSelected === correctOpt.id;
+
+    // Reveal results
+    document.querySelectorAll('.smoke-option').forEach(function (el) {
+      var id = el.getAttribute('data-smoke');
+      var opt = st.options.find(function (o) { return o.id === id; });
+      if (opt && opt.correct) {
+        el.classList.add('option-correct');
+      } else if (id === smokeSelected && !isCorrect) {
+        el.classList.add('option-wrong');
+      } else {
+        el.classList.add('option-disabled');
+      }
+    });
+
+    return {
+      valid: true,
+      score: isCorrect ? 5 : 0,
+      answers: { smokeTestChoice: smokeSelected, smokeTestCorrect: isCorrect },
+      feedbackTitle: isCorrect ? 'Correct Decision!' : 'Not the best call here.',
+      explanation: st.explanation
+    };
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Navigation
+  ───────────────────────────────────────────────────────────────────────── */
+  function handleNext() {
+    if (!stepAnswered[currentStep]) {
+      // Validate current step
+      var result;
+      if (currentStep === 1) result = validateHypothesis();
+      else if (currentStep === 2) result = validateInterviewFilter();
+      else if (currentStep === 3) result = validateMarketSizing();
+      else result = validateSmokeTest();
+
+      if (!result.valid) {
+        BizSim.showToast(result.message, 'warning');
+        return;
+      }
+
+      stepScores[currentStep]   = result.score;
+      stepAnswers[currentStep]  = result.answers;
+      stepAnswered[currentStep] = true;
+
+      // Show feedback
+      BizSim.showFeedback('feedback-container', {
+        correct:     result.score > 0,
+        points:      result.score,
+        title:       result.feedbackTitle,
+        explanation: result.explanation
+      });
+
+      // Update score chip
+      var totalSoFar = stepScores[1] + stepScores[2] + stepScores[3] + stepScores[4];
+      var chip = document.getElementById('step-score-display');
+      chip.textContent = 'Score so far: ' + totalSoFar + ' / 25 pts';
+      chip.classList.remove('hidden');
+
+      // Update sidebar ring (show preview)
+      var prevTotal = BizSim.getTotalScore();
+      BizSim.animateScore('sidebar-score', prevTotal + totalSoFar);
+      BizSim.updateHealthRing(prevTotal + totalSoFar);
+
+      // Update button label
+      if (currentStep < totalSteps) {
+        document.getElementById('btn-next').textContent = 'Next Step →';
+      } else {
+        document.getElementById('btn-next').textContent = 'Complete Module →';
+        document.getElementById('btn-next').classList.add('btn-success');
+      }
+
+    } else {
+      // Move forward or complete
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+        document.getElementById('feedback-container').innerHTML = '';
+        document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Next Step →' : 'Check Answer →';
+      } else {
+        // Complete module
+        var totalScore = stepScores[1] + stepScores[2] + stepScores[3] + stepScores[4];
+        var allAnswers = Object.assign({}, stepAnswers[1], stepAnswers[2], stepAnswers[3], stepAnswers[4]);
+        BizSim.completeModule(1, totalScore, allAnswers);
+        BizSim.showToast('Module 1 complete! You scored ' + totalScore + '/25 pts 🎉', 'success');
+        setTimeout(function () { BizSim.goToNextModule(1); }, 1800);
+      }
+    }
+  }
+
+  function handleBack() {
+    if (currentStep > 1) {
+      currentStep--;
+      showStep(currentStep);
+      document.getElementById('feedback-container').innerHTML = '';
+      document.getElementById('btn-next').textContent = stepAnswered[currentStep] ? 'Next Step →' : 'Check Answer →';
+      document.getElementById('btn-next').classList.remove('btn-success');
+    } else {
+      window.location.href = 'index.html';
+    }
+  }
+
+  function showStep(n) {
+    document.querySelectorAll('.step-content').forEach(function (el) {
+      el.classList.add('hidden');
+      el.classList.remove('fade-in-up');
+    });
+    var target = document.getElementById('step-' + n);
+    target.classList.remove('hidden');
+    requestAnimationFrame(function () {
+      target.classList.add('fade-in-up');
+    });
+
+    document.getElementById('step-title').textContent    = stepTitles[n - 1];
+    document.getElementById('step-subtitle').textContent = stepSubtitles[n - 1];
+    BizSim.initStepIndicator(totalSteps, n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* ─────────────────────────────────────────────────────────────────────────
+     Utility
+  ───────────────────────────────────────────────────────────────────────── */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+}); // end DOMContentLoaded
+</script>
+</body>
+</html>

@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizSim — Module 4: Go-to-Market Strategy</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── GTM Motion Cards ─────────────────────────────────────────── */
+    .motion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .motion-card {
+      padding: 20px;
+      border: 2px solid var(--color-border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .motion-card:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .motion-card.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .motion-card.correct-reveal {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+    }
+    .motion-card.wrong-reveal {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+    }
+    .motion-card-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .motion-card-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--color-text);
+    }
+    .motion-card-desc {
+      font-size: 13px;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+      line-height: 1.5;
+    }
+    .motion-card-best {
+      font-size: 12px;
+      color: var(--color-text-subtle);
+      margin-bottom: 10px;
+    }
+    .motion-card-examples {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .motion-example-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 99px;
+      color: var(--color-text-muted);
+    }
+
+    /* ── Positioning Statement ───────────────────────────────────── */
+    .positioning-template {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .positioning-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .positioning-keyword {
+      color: var(--color-text-muted);
+      font-style: italic;
+      font-size: 15px;
+      min-width: 130px;
+      padding-top: 9px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .positioning-preview-box {
+      background: var(--color-surface-2, #263548);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin-top: 16px;
+    }
+    .positioning-preview-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-text-subtle);
+      margin-bottom: 10px;
+    }
+    #positioning-preview {
+      font-style: italic;
+      font-size: 16px;
+      line-height: 1.75;
+      color: var(--color-text);
+    }
+
+    /* ── Channel Table ───────────────────────────────────────────── */
+    .channel-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .channel-table th {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--color-border);
+      text-align: left;
+    }
+    .channel-table td {
+      padding: 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    .channel-table tr:last-child td {
+      border-bottom: none;
+    }
+    .channel-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .channel-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .slider-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="range"].channel-slider {
+      width: 100px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+    .slider-val {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: var(--font-mono, monospace);
+      color: var(--color-text);
+      min-width: 20px;
+      text-align: center;
+    }
+    input[type="checkbox"].channel-select {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* ── Misc ─────────────────────────────────────────────────────── */
+    .step-score-pill {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+    .selected-channels-display {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .selected-channel-tag {
+      font-size: 12px;
+      padding: 4px 10px;
+      background: var(--color-primary-glow);
+      border: 1px solid var(--color-primary);
+      border-radius: 99px;
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+<div class="layout-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">BizSim</div>
+      <div class="logo-tagline">Business Simulation</div>
+    </div>
+    <div class="sidebar-scenario-pill" id="sidebar-scenario"></div>
+    <nav class="sidebar-nav">
+      <a href="module-1.html" class="sidebar-nav-item done" data-module="1">
+        <span class="nav-icon">✓</span>
+        <span class="nav-label">Problem Validation</span>
+      </a>
+      <a href="module-2.html" class="sidebar-nav-item done" data-module="2">
+        <span class="nav-icon">✓</span>
+        <span class="nav-label">Customer Discovery</span>
+      </a>
+      <a href="module-3.html" class="sidebar-nav-item done" data-module="3">
+        <span class="nav-icon">✓</span>
+        <span class="nav-label">Business Model</span>
+      </a>
+      <div class="sidebar-nav-item active" data-module="4">
+        <span class="nav-icon">📐</span>
+        <span class="nav-label">Go-to-Market</span>
+      </div>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-footer">
+      <div class="score-ring-container">
+        <svg class="score-ring" viewBox="0 0 80 80">
+          <circle class="score-ring-track" cx="40" cy="40" r="34" fill="none" stroke-width="6"/>
+          <circle class="score-ring-fill" cx="40" cy="40" r="34" fill="none" stroke-width="6"
+                  stroke-linecap="round" transform="rotate(-90 40 40)"/>
+        </svg>
+        <div class="score-ring-text">
+          <span class="score-ring-num" id="sidebar-score">0</span>
+          <span class="score-ring-denom">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="page-wrapper">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header fade-in-up">
+        <div class="page-header-meta">MODULE 4 · GO-TO-MARKET STRATEGY</div>
+        <h1 class="page-header-title" id="step-title">GTM Motion Selector</h1>
+        <p class="page-header-subtitle" id="step-subtitle">Choose how you'll primarily acquire and grow customers.</p>
+        <div class="step-indicator" id="step-indicator"></div>
+      </div>
+
+      <!-- STEP 1: GTM MOTION -->
+      <div class="step-content fade-in-up" id="step-1">
+
+        <div class="card stagger-1">
+          <div class="card-header">
+            <div class="flex-between" style="align-items:flex-start">
+              <div>
+                <div class="card-title">Select Your GTM Motion</div>
+                <div class="card-subtitle">Choose how you'll primarily acquire and grow customers</div>
+              </div>
+              <span class="badge badge-warning">8 pts</span>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">Choosing the Right GTM Motion</div>
+              <div class="alert-body">Your GTM motion determines how customers discover, try, and buy your product. The right choice depends on your price point, buyer profile, and product complexity. Most companies blend motions over time — but leading with the right one accelerates early traction.</div>
+            </div>
+
+            <div class="motion-grid" id="motion-grid">
+              <!-- Rendered by JS -->
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label">Justify your choice</label>
+              <textarea class="form-textarea" id="motion-justification"
+                        placeholder="Why is this the right GTM motion for your startup? Consider your price point, buyer persona, and product complexity..." rows="3"></textarea>
+              <div class="form-hint">A strong justification earns partial credit even if your motion selection is off.</div>
+            </div>
+
+            <div id="motion-correct-reveal" class="hidden mt-4">
+              <!-- Shown after submission -->
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /step-1 -->
+
+      <!-- STEP 2: POSITIONING STATEMENT -->
+      <div class="step-content hidden" id="step-2">
+
+        <div class="card stagger-1">
+          <div class="card-header">
+            <div class="flex-between" style="align-items:flex-start">
+              <div>
+                <div class="card-title">Positioning Statement Builder</div>
+                <div class="card-subtitle">Complete the Geoffrey Moore positioning framework</div>
+              </div>
+              <span class="badge badge-warning">7 pts</span>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">Why Positioning Matters</div>
+              <div class="alert-body">Positioning is how you define your product in the mind of the customer relative to alternatives. A clear positioning statement aligns all your messaging — from sales decks to landing pages to investor pitches.</div>
+            </div>
+
+            <div class="positioning-template" id="positioning-template">
+              <div class="positioning-row">
+                <span class="positioning-keyword">"For</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-customer" placeholder="target customer...">
+                  <div class="form-hint">Who specifically are you serving?</div>
+                </div>
+              </div>
+              <div class="positioning-row">
+                <span class="positioning-keyword">who</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-problem" placeholder="has this specific problem...">
+                  <div class="form-hint">State the acute pain you solve</div>
+                </div>
+              </div>
+              <div class="positioning-row">
+                <span class="positioning-keyword">[product] is a</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-category" placeholder="product category...">
+                  <div class="form-hint">What kind of product is it? (e.g. "SaaS platform", "mobile app")</div>
+                </div>
+              </div>
+              <div class="positioning-row">
+                <span class="positioning-keyword">that</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-benefit" placeholder="key benefit delivered...">
+                  <div class="form-hint">Quantified outcome if possible</div>
+                </div>
+              </div>
+              <div class="positioning-row">
+                <span class="positioning-keyword">Unlike</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-alternative" placeholder="competitive alternative...">
+                  <div class="form-hint">Name their current alternative (could be "spreadsheets" or a competitor)</div>
+                </div>
+              </div>
+              <div class="positioning-row">
+                <span class="positioning-keyword">we</span>
+                <div class="form-group w-full">
+                  <input type="text" class="form-input" id="pos-differentiator" placeholder="key differentiator...">
+                  <div class="form-hint">What can only you do? Your unfair advantage in action.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Live preview -->
+            <div class="positioning-preview-box mt-4">
+              <div class="positioning-preview-label">Live Preview</div>
+              <p id="positioning-preview" style="color:var(--color-text-muted); font-style:italic;">
+                Fill in the fields above to see your positioning statement...
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /step-2 -->
+
+      <!-- STEP 3: CHANNEL MATRIX -->
+      <div class="step-content hidden" id="step-3">
+
+        <div class="card stagger-1">
+          <div class="card-header">
+            <div class="flex-between" style="align-items:flex-start">
+              <div>
+                <div class="card-title">Channel Selection Matrix</div>
+                <div class="card-subtitle">Rate each channel and pick your top 2 for launch</div>
+              </div>
+              <span class="badge badge-warning">10 pts</span>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">Channel Strategy Rule</div>
+              <div class="alert-body">Pick 1–2 channels. Validate before diversifying. Over-investing in too many channels simultaneously is one of the most common GTM mistakes — you dilute focus before you have proof of what works.</div>
+            </div>
+
+            <table class="channel-table">
+              <thead>
+                <tr>
+                  <th>Channel</th>
+                  <th>Reach (1–5)</th>
+                  <th>Conversion (1–5)</th>
+                  <th>Select Top 2</th>
+                </tr>
+              </thead>
+              <tbody id="channel-rows">
+                <!-- Rendered by JS -->
+              </tbody>
+            </table>
+
+            <div id="channel-warning" class="alert alert-warning hidden mt-4">
+              <div class="alert-body">Select exactly 2 channels as your primary launch focus.</div>
+            </div>
+
+            <div class="mt-4">
+              <div style="font-size:13px; color:var(--color-text-muted); margin-bottom:6px;">Your selected channels:</div>
+              <div class="selected-channels-display" id="selected-channels-display">
+                <span style="font-size:13px; color:var(--color-text-subtle);">None selected yet</span>
+              </div>
+            </div>
+
+            <div id="channel-correct-reveal" class="hidden mt-4">
+              <!-- Shown after submission -->
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /step-3 -->
+
+      <!-- FEEDBACK -->
+      <div id="feedback-container" class="mt-4"></div>
+
+      <!-- MODULE NAV -->
+      <div class="module-nav">
+        <button class="btn btn-ghost module-nav-back" id="btn-back">← Back</button>
+        <div class="flex-center gap-4">
+          <span id="step-score-display"></span>
+          <button class="btn btn-primary module-nav-next" id="btn-next">Check Answer →</button>
+        </div>
+      </div>
+
+    </div><!-- /page-wrapper -->
+  </main>
+
+</div><!-- /layout-shell -->
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/modules.js"></script>
+<script>
+/* =========================================================================
+   Module 4 — Go-to-Market Strategy
+   Steps: 1 = GTM Motion  |  2 = Positioning Statement  |  3 = Channel Matrix
+   ========================================================================= */
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── Guards ─────────────────────────────────────────────────────────── */
+  var state = BizSim.getState();
+  if (!state.scenario) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (!BizSim.canAccessModule(4)) {
+    BizSim.showToast('Complete Module 3 first', 'warning');
+    window.location.href = 'module-3.html';
+    return;
+  }
+
+  BizSim.initSidebar();
+
+  var scenarioId = state.scenario;
+  var d4 = BizSimData.module4;
+  var channelData = d4.channelMatrix[scenarioId] || { channels: [], topChannels: [], explanation: '' };
+  var placeholders = d4.positioningPlaceholders[scenarioId] || {};
+
+  /* ── Step state ─────────────────────────────────────────────────────── */
+  var currentStep   = 1;
+  var totalSteps    = 3;
+  var stepScores    = { 1: null, 2: null, 3: null };
+  var stepSubmitted = { 1: false, 2: false, 3: false };
+
+  /* ── Answers ────────────────────────────────────────────────────────── */
+  var answers = {
+    gtmMotion:        null,
+    gtmJustification: '',
+    positioning: {
+      customer:      '',
+      problem:       '',
+      category:      '',
+      benefit:       '',
+      alternative:   '',
+      differentiator:'',
+    },
+    channelRatings:   {},   /* { channelId: { reach, conversion } } */
+    selectedChannels: [],
+  };
+
+  /* ── Step meta ──────────────────────────────────────────────────────── */
+  var stepMeta = {
+    1: { title: 'GTM Motion Selector',       subtitle: 'Choose how you\'ll primarily acquire and grow customers.' },
+    2: { title: 'Positioning Statement',     subtitle: 'Define your product\'s position in the market using Geoffrey Moore\'s framework.' },
+    3: { title: 'Channel Selection Matrix',  subtitle: 'Rate each channel and select your top 2 for launch.' },
+  };
+
+  /* ── Init ────────────────────────────────────────────────────────────── */
+  function init() {
+    renderMotionCards();
+    prefillPositioning();
+    renderChannelTable();
+    updateSidebarScore();
+    showStep(1);
+  }
+
+  /* ── GTM Motion Cards ───────────────────────────────────────────────── */
+  function renderMotionCards() {
+    var grid = document.getElementById('motion-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    d4.gtmMotions.forEach(function (motion) {
+      var card = document.createElement('div');
+      card.className = 'motion-card';
+      card.dataset.motionId = motion.id;
+
+      var examplesHtml = (motion.examples || []).map(function (e) {
+        return '<span class="motion-example-tag">' + e + '</span>';
+      }).join('');
+
+      card.innerHTML =
+        '<div class="motion-card-icon">' + motion.icon + '</div>' +
+        '<div class="motion-card-name">' + motion.label + '</div>' +
+        '<div class="motion-card-desc">' + motion.desc + '</div>' +
+        '<div class="motion-card-best">Best for: ' + motion.bestFor + '</div>' +
+        '<div class="motion-card-examples">' + examplesHtml + '</div>';
+
+      card.addEventListener('click', function () {
+        if (stepSubmitted[1]) return;
+        document.querySelectorAll('.motion-card').forEach(function (c) {
+          c.classList.remove('selected');
+        });
+        card.classList.add('selected');
+        answers.gtmMotion = motion.id;
+      });
+
+      grid.appendChild(card);
+    });
+
+    /* Restore prior selection */
+    if (answers.gtmMotion) {
+      var sel = grid.querySelector('[data-motion-id="' + answers.gtmMotion + '"]');
+      if (sel) sel.classList.add('selected');
+    }
+
+    /* Justification textarea */
+    var ta = document.getElementById('motion-justification');
+    if (ta) {
+      ta.addEventListener('input', function () {
+        answers.gtmJustification = ta.value;
+      });
+    }
+  }
+
+  /* ── Positioning Statement ──────────────────────────────────────────── */
+  function prefillPositioning() {
+    var fields = [
+      { id: 'pos-customer',      key: 'customer',      phKey: 'targetCustomer' },
+      { id: 'pos-problem',       key: 'problem',       phKey: 'problem' },
+      { id: 'pos-category',      key: 'category',      phKey: 'category' },
+      { id: 'pos-benefit',       key: 'benefit',       phKey: 'benefit' },
+      { id: 'pos-alternative',   key: 'alternative',   phKey: 'alternative' },
+      { id: 'pos-differentiator',key: 'differentiator',phKey: 'differentiator' },
+    ];
+
+    fields.forEach(function (f) {
+      var el = document.getElementById(f.id);
+      if (!el) return;
+
+      /* Pre-fill with scenario placeholder */
+      var preVal = placeholders[f.phKey] || '';
+      el.value = preVal;
+      answers.positioning[f.key] = preVal;
+
+      el.addEventListener('input', function () {
+        answers.positioning[f.key] = el.value;
+        updatePositioningPreview();
+      });
+    });
+
+    updatePositioningPreview();
+  }
+
+  function updatePositioningPreview() {
+    var preview = document.getElementById('positioning-preview');
+    if (!preview) return;
+
+    var f = answers.positioning;
+    var hasSome = Object.values(f).some(function (v) { return v && v.trim().length > 0; });
+
+    if (!hasSome) {
+      preview.style.color = 'var(--color-text-muted)';
+      preview.textContent = 'Fill in the fields above to see your positioning statement...';
+      return;
+    }
+
+    preview.style.color = 'var(--color-text)';
+    preview.textContent = BizSimModules.buildPositioningStatement(f);
+  }
+
+  /* ── Channel Table ──────────────────────────────────────────────────── */
+  function renderChannelTable() {
+    var tbody = document.getElementById('channel-rows');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    var channels = channelData.channels || [];
+
+    channels.forEach(function (ch) {
+      /* Init ratings with channel defaults */
+      answers.channelRatings[ch.id] = {
+        reach:      ch.reach      || 3,
+        conversion: ch.conversion || 3,
+      };
+
+      var tr = document.createElement('tr');
+
+      /* Channel name */
+      var nameTd = document.createElement('td');
+      nameTd.innerHTML =
+        '<div class="channel-name-cell">' +
+          '<span class="channel-icon">' + (ch.icon || '📌') + '</span>' +
+          '<span>' + ch.name + '</span>' +
+        '</div>';
+      tr.appendChild(nameTd);
+
+      /* Reach slider */
+      tr.appendChild(buildSliderTd(ch.id, 'reach', ch.reach || 3));
+
+      /* Conversion slider */
+      tr.appendChild(buildSliderTd(ch.id, 'conversion', ch.conversion || 3));
+
+      /* Checkbox */
+      var checkTd = document.createElement('td');
+      checkTd.style.textAlign = 'center';
+      var checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.className = 'channel-select';
+      checkbox.dataset.channelId = ch.id;
+      checkbox.dataset.channelName = ch.name;
+      checkbox.addEventListener('change', onChannelCheckboxChange);
+      checkTd.appendChild(checkbox);
+      tr.appendChild(checkTd);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  function buildSliderTd(channelId, metric, defaultVal) {
+    var td = document.createElement('td');
+
+    var group = document.createElement('div');
+    group.className = 'slider-group';
+
+    var slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'channel-slider';
+    slider.min = '1';
+    slider.max = '5';
+    slider.value = defaultVal;
+    slider.dataset.channelId = channelId;
+    slider.dataset.metric = metric;
+
+    var valDisplay = document.createElement('span');
+    valDisplay.className = 'slider-val';
+    valDisplay.textContent = defaultVal;
+
+    slider.addEventListener('input', function () {
+      valDisplay.textContent = slider.value;
+      answers.channelRatings[channelId] = answers.channelRatings[channelId] || {};
+      answers.channelRatings[channelId][metric] = parseInt(slider.value, 10);
+    });
+
+    group.appendChild(slider);
+    group.appendChild(valDisplay);
+    td.appendChild(group);
+    return td;
+  }
+
+  function onChannelCheckboxChange() {
+    if (stepSubmitted[3]) return;
+
+    var selected = getSelectedChannels();
+
+    /* Enforce max 2 */
+    var warning = document.getElementById('channel-warning');
+    if (selected.length > 2) {
+      this.checked = false;
+      if (warning) warning.classList.remove('hidden');
+      BizSim.showToast('You can only select 2 channels', 'warning');
+      return;
+    }
+    if (warning) warning.classList.add('hidden');
+
+    /* Update display */
+    updateSelectedChannelsDisplay();
+  }
+
+  function getSelectedChannels() {
+    return Array.from(document.querySelectorAll('.channel-select:checked'))
+      .map(function (cb) { return cb.dataset.channelId; });
+  }
+
+  function getSelectedChannelNames() {
+    return Array.from(document.querySelectorAll('.channel-select:checked'))
+      .map(function (cb) { return cb.dataset.channelName; });
+  }
+
+  function updateSelectedChannelsDisplay() {
+    var container = document.getElementById('selected-channels-display');
+    if (!container) return;
+    var names = getSelectedChannelNames();
+    if (names.length === 0) {
+      container.innerHTML = '<span style="font-size:13px; color:var(--color-text-subtle);">None selected yet</span>';
+    } else {
+      container.innerHTML = names.map(function (n) {
+        return '<span class="selected-channel-tag">' + n + '</span>';
+      }).join('');
+    }
+  }
+
+  /* ── Step management ────────────────────────────────────────────────── */
+  function showStep(n) {
+    currentStep = n;
+
+    BizSim.initStepIndicator(totalSteps, n);
+
+    for (var i = 1; i <= totalSteps; i++) {
+      var el = document.getElementById('step-' + i);
+      if (el) {
+        if (i === n) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      }
+    }
+
+    var meta = stepMeta[n];
+    if (meta) {
+      var t = document.getElementById('step-title');
+      var s = document.getElementById('step-subtitle');
+      if (t) t.textContent = meta.title;
+      if (s) s.textContent = meta.subtitle;
+    }
+
+    var btnBack = document.getElementById('btn-back');
+    var btnNext = document.getElementById('btn-next');
+
+    if (btnBack) {
+      if (n === 1) {
+        btnBack.textContent = '← Back to Module 3';
+        btnBack.onclick = function () { window.location.href = 'module-3.html'; };
+      } else {
+        btnBack.textContent = '← Back';
+        btnBack.onclick = goBack;
+      }
+    }
+
+    if (btnNext) {
+      if (stepSubmitted[n]) {
+        btnNext.textContent = n === totalSteps ? 'See Your Results →' : 'Next Step →';
+      } else {
+        btnNext.textContent = 'Check Answer →';
+      }
+    }
+
+    updateStepScoreDisplay();
+
+    if (!stepSubmitted[n]) {
+      var fc = document.getElementById('feedback-container');
+      if (fc) fc.innerHTML = '';
+    }
+  }
+
+  function updateStepScoreDisplay() {
+    var el = document.getElementById('step-score-display');
+    if (!el) return;
+    if (stepScores[currentStep] !== null) {
+      el.innerHTML = '<span class="step-score-pill">Step score: ' + stepScores[currentStep] + ' pts</span>';
+    } else {
+      el.innerHTML = '';
+    }
+  }
+
+  function updateSidebarScore() {
+    var total = BizSim.getTotalScore();
+    var sidebarNum = document.getElementById('sidebar-score');
+    if (sidebarNum) sidebarNum.textContent = total;
+    BizSim.updateHealthRing(total);
+  }
+
+  /* ── Navigation ─────────────────────────────────────────────────────── */
+  function goBack() {
+    if (currentStep > 1) showStep(currentStep - 1);
+  }
+
+  document.getElementById('btn-next').addEventListener('click', function () {
+    if (stepSubmitted[currentStep]) {
+      if (currentStep < totalSteps) {
+        showStep(currentStep + 1);
+      } else {
+        finishModule();
+      }
+      return;
+    }
+
+    switch (currentStep) {
+      case 1: submitGtmMotion();    break;
+      case 2: submitPositioning();  break;
+      case 3: submitChannelMatrix(); break;
+    }
+  });
+
+  /* ── Step 1: GTM Motion submit ──────────────────────────────────────── */
+  function submitGtmMotion() {
+    var selected = answers.gtmMotion;
+    if (!selected) {
+      BizSim.showToast('Please select a GTM motion first', 'warning');
+      return;
+    }
+
+    var correct    = d4.correctGtmMotion[scenarioId];
+    var isCorrect  = selected === correct;
+    var justText   = (answers.gtmJustification || '').trim();
+    var wordCount  = justText.split(/\s+/).filter(Boolean).length;
+
+    var score;
+    if (isCorrect) {
+      score = 8;
+    } else if (wordCount >= 50) {
+      score = 5;
+    } else {
+      score = 2;
+    }
+
+    stepScores[1] = score;
+    stepSubmitted[1] = true;
+
+    var correctMotion = d4.gtmMotions.find(function (m) { return m.id === correct; });
+    var explanation   = d4.gtmMotionExplanations[scenarioId] || '';
+
+    /* Reveal correct card */
+    document.querySelectorAll('.motion-card').forEach(function (card) {
+      var id = card.dataset.motionId;
+      card.style.cursor = 'default';
+      if (id === correct) card.classList.add('correct-reveal');
+      if (id === selected && id !== correct) card.classList.add('wrong-reveal');
+    });
+
+    /* Show correct reveal block */
+    var revealEl = document.getElementById('motion-correct-reveal');
+    if (revealEl) {
+      revealEl.classList.remove('hidden');
+      revealEl.innerHTML =
+        '<div class="alert ' + (isCorrect ? 'alert-success' : 'alert-warning') + '">' +
+          '<div class="alert-title">' +
+            (isCorrect
+              ? '✓ Correct GTM Motion!'
+              : 'Best motion for this scenario: ' + (correctMotion ? correctMotion.label : correct)) +
+          '</div>' +
+          '<div class="alert-body">' + explanation + '</div>' +
+        '</div>';
+    }
+
+    BizSim.showFeedback('feedback-container', {
+      correct:     isCorrect,
+      points:      score,
+      title:       isCorrect ? 'Right GTM Motion!' : 'Not quite — see the explanation below.',
+      explanation: explanation,
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'Next Step →';
+  }
+
+  /* ── Step 2: Positioning submit ─────────────────────────────────────── */
+  function submitPositioning() {
+    var fields = answers.positioning;
+    var fieldKeys = ['customer', 'problem', 'category', 'benefit', 'alternative', 'differentiator'];
+
+    var filledCount = fieldKeys.filter(function (k) {
+      var v = (fields[k] || '').trim();
+      return v.split(/\s+/).length >= 5;
+    }).length;
+
+    /* Score: 7 pts if all 6 filled, proportional partial credit */
+    var score = Math.round((filledCount / 6) * 7);
+    stepScores[2] = score;
+    stepSubmitted[2] = true;
+
+    var allFilled = filledCount >= 6;
+    var mostFilled = filledCount >= 4;
+
+    BizSim.showFeedback('feedback-container', {
+      correct:     allFilled,
+      points:      score,
+      title:       allFilled ? 'Positioning Complete!'
+                  : mostFilled ? 'Almost There'
+                  : 'Keep Building',
+      explanation: 'You completed ' + filledCount + ' of 6 positioning fields with meaningful content. '
+        + (allFilled
+            ? 'A crisp positioning statement like this is the foundation of every great marketing message.'
+            : 'Try to complete all 6 fields — each one forces explicit thinking about who you serve, how, and why customers should choose you over alternatives.'),
+    });
+
+    /* Disable inputs */
+    fieldKeys.forEach(function (k) {
+      var el = document.getElementById('pos-' + k);
+      if (el) el.disabled = true;
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'Next Step →';
+  }
+
+  /* ── Step 3: Channel Matrix submit ──────────────────────────────────── */
+  function submitChannelMatrix() {
+    var selected = getSelectedChannels();
+
+    if (selected.length === 0) {
+      BizSim.showToast('Select at least 1 channel to continue', 'warning');
+      return;
+    }
+    if (selected.length !== 2) {
+      document.getElementById('channel-warning').classList.remove('hidden');
+      BizSim.showToast('Select exactly 2 channels', 'warning');
+      return;
+    }
+
+    answers.selectedChannels = selected;
+
+    var correct = channelData.topChannels || [];
+    var score   = BizSimModules.scoreChannelSelection(selected, correct);
+
+    stepScores[3] = score;
+    stepSubmitted[3] = true;
+
+    /* Disable checkboxes */
+    document.querySelectorAll('.channel-select').forEach(function (cb) {
+      cb.disabled = true;
+    });
+
+    /* Reveal correct channels */
+    var correctNames = (channelData.channels || [])
+      .filter(function (c) { return correct.indexOf(c.id) !== -1; })
+      .map(function (c) { return c.icon + ' ' + c.name; });
+
+    var revealEl = document.getElementById('channel-correct-reveal');
+    if (revealEl) {
+      revealEl.classList.remove('hidden');
+      var bothCorrect = score === 10;
+      revealEl.innerHTML =
+        '<div class="alert ' + (bothCorrect ? 'alert-success' : score >= 5 ? 'alert-warning' : 'alert-info') + '">' +
+          '<div class="alert-title">' +
+            (bothCorrect
+              ? '✓ Perfect Channel Selection!'
+              : 'Optimal channels for this scenario: ' + correctNames.join(' & ')) +
+          '</div>' +
+          '<div class="alert-body">' + (channelData.explanation || '') + '</div>' +
+        '</div>';
+    }
+
+    var matches = selected.filter(function (s) { return correct.indexOf(s) !== -1; }).length;
+    BizSim.showFeedback('feedback-container', {
+      correct:     score === 10,
+      points:      score,
+      title:       score === 10 ? 'Perfect Channel Pick!'
+                  : score >= 5  ? 'One of Two Correct'
+                  : 'Channel Selection Off',
+      explanation: matches === 2
+        ? 'Both channels match the optimal strategy. ' + (channelData.explanation || '')
+        : matches === 1
+          ? 'One of your picks is correct. ' + (channelData.explanation || '')
+          : 'The best launch channels for this scenario are ' + correctNames.join(' and ') + '. ' + (channelData.explanation || ''),
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'See Your Results →';
+  }
+
+  /* ── Finish module ──────────────────────────────────────────────────── */
+  function finishModule() {
+    var totalScore = (stepScores[1] || 0) + (stepScores[2] || 0) + (stepScores[3] || 0);
+
+    BizSim.completeModule(4, totalScore, {
+      gtmMotion:        answers.gtmMotion,
+      positioning:      answers.positioning,
+      selectedChannels: answers.selectedChannels,
+    });
+
+    BizSim.showToast('Module 4 complete! +' + totalScore + ' points', 'success');
+    updateSidebarScore();
+
+    setTimeout(function () {
+      BizSim.goToNextModule(4);
+    }, 800);
+  }
+
+  /* ── Boot ───────────────────────────────────────────────────────────── */
+  init();
+});
+</script>
+</body>
+</html>

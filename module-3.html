@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BizSim — Module 3: Business Model Basics</title>
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    /* ── Lean Canvas ─────────────────────────────────────────────── */
+    .canvas-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      background: var(--color-border);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .canvas-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+    }
+    .canvas-row-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .canvas-cell {
+      background: var(--color-surface);
+      padding: 14px;
+      min-height: 130px;
+    }
+    .canvas-cell-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--color-primary);
+      margin-bottom: 3px;
+    }
+    .canvas-cell-hint {
+      font-size: 11px;
+      color: var(--color-text-subtle, #64748B);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .canvas-textarea {
+      width: 100%;
+      min-height: 72px;
+      background: transparent;
+      border: none;
+      color: var(--color-text);
+      font-size: 13px;
+      resize: vertical;
+      font-family: var(--font-body);
+      line-height: 1.5;
+    }
+    .canvas-textarea:focus {
+      outline: none;
+    }
+    .canvas-completeness {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--color-surface-2);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+    .canvas-completeness-bar-track {
+      flex: 1;
+      height: 6px;
+      background: var(--color-border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .canvas-completeness-bar-fill {
+      height: 100%;
+      background: var(--color-primary);
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    /* ── Revenue Models ──────────────────────────────────────────── */
+    .revenue-model-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .revenue-model-card {
+      padding: 16px;
+      border: 2px solid var(--color-border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .revenue-model-card:hover {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .revenue-model-card.selected {
+      border-color: var(--color-primary);
+      background: var(--color-primary-glow);
+    }
+    .revenue-model-card.correct-reveal {
+      border-color: var(--color-success);
+      background: var(--color-success-glow);
+    }
+    .revenue-model-card.wrong-reveal {
+      border-color: var(--color-danger);
+      background: var(--color-danger-glow);
+    }
+    .revenue-model-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+    .revenue-model-label {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .revenue-model-desc {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-bottom: 4px;
+    }
+    .revenue-model-best {
+      font-size: 11px;
+      color: var(--color-text-subtle);
+    }
+
+    /* ── Unit Economics Calculator ───────────────────────────────── */
+    .calc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .calc-result-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .calc-result-card {
+      text-align: center;
+      padding: 20px 16px;
+      background: var(--color-surface-2, #263548);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      transition: border-color 0.3s;
+    }
+    .calc-result-card.status-success { border-color: var(--color-success); }
+    .calc-result-card.status-warning { border-color: var(--color-warning); }
+    .calc-result-card.status-danger  { border-color: var(--color-danger);  }
+    .calc-result-value {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: var(--font-mono, monospace);
+      margin-bottom: 6px;
+    }
+    .calc-result-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-muted);
+      margin-bottom: 8px;
+    }
+    .calc-result-formula {
+      font-size: 11px;
+      color: var(--color-text-subtle);
+      margin-top: 8px;
+    }
+
+    /* ── Input with prefix ───────────────────────────────────────── */
+    .input-prefix-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .input-prefix {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    /* ── Misc ───────────────────────────────────────────────────────── */
+    .step-score-pill {
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: 99px;
+      padding: 4px 12px;
+      font-size: 13px;
+      color: var(--color-text-muted);
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .data-table th {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      padding: 10px 14px;
+      border-bottom: 1px solid var(--color-border);
+      text-align: left;
+    }
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--color-border);
+      vertical-align: middle;
+    }
+    .data-table tr:last-child td {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body>
+<div class="layout-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">BizSim</div>
+      <div class="logo-tagline">Business Simulation</div>
+    </div>
+    <div class="sidebar-scenario-pill" id="sidebar-scenario"></div>
+    <nav class="sidebar-nav">
+      <a href="module-1.html" class="sidebar-nav-item done" data-module="1">
+        <span class="nav-icon">✓</span>
+        <span class="nav-label">Problem Validation</span>
+      </a>
+      <a href="module-2.html" class="sidebar-nav-item done" data-module="2">
+        <span class="nav-icon">✓</span>
+        <span class="nav-label">Customer Discovery</span>
+      </a>
+      <div class="sidebar-nav-item active" data-module="3">
+        <span class="nav-icon">🗺️</span>
+        <span class="nav-label">Business Model</span>
+      </div>
+      <a href="module-4.html" class="sidebar-nav-item locked" data-module="4" data-href="module-4.html">
+        <span class="nav-icon">📐</span>
+        <span class="nav-label">Go-to-Market</span>
+      </a>
+    </nav>
+    <div class="sidebar-divider"></div>
+    <div class="sidebar-footer">
+      <div class="score-ring-container">
+        <svg class="score-ring" viewBox="0 0 80 80">
+          <circle class="score-ring-track" cx="40" cy="40" r="34" fill="none" stroke-width="6"/>
+          <circle class="score-ring-fill" cx="40" cy="40" r="34" fill="none" stroke-width="6"
+                  stroke-linecap="round" transform="rotate(-90 40 40)"/>
+        </svg>
+        <div class="score-ring-text">
+          <span class="score-ring-num" id="sidebar-score">0</span>
+          <span class="score-ring-denom">/ 100</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="page-wrapper">
+
+      <!-- PAGE HEADER -->
+      <div class="page-header fade-in-up">
+        <div class="page-header-meta">MODULE 3 · BUSINESS MODEL BASICS</div>
+        <h1 class="page-header-title" id="step-title">Lean Canvas Builder</h1>
+        <p class="page-header-subtitle" id="step-subtitle">Map your startup's business model on a single canvas.</p>
+        <div class="step-indicator" id="step-indicator"></div>
+      </div>
+
+      <!-- STEP 1: LEAN CANVAS -->
+      <div class="step-content fade-in-up" id="step-1">
+
+        <div class="alert alert-info mb-4 stagger-1">
+          <div class="alert-title">The Lean Canvas (Ash Maurya)</div>
+          <div class="alert-body">A startup-optimized business model canvas. Complete each of the 9 blocks for your startup. Pre-filled with your scenario's context — customize as needed to reflect your thinking.</div>
+        </div>
+
+        <div class="canvas-grid stagger-2" id="lean-canvas">
+          <!-- Row 1: Problem | Solution | UVP -->
+          <div class="canvas-row">
+            <div class="canvas-cell" id="cell-problem">
+              <div class="canvas-cell-label">Problem</div>
+              <div class="canvas-cell-hint">Top 3 problems your customer faces.</div>
+              <textarea class="canvas-textarea" id="canvas-problem" placeholder="Describe the core problems..."></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-solution">
+              <div class="canvas-cell-label">Solution</div>
+              <div class="canvas-cell-hint">Top 3 features of your MVP.</div>
+              <textarea class="canvas-textarea" id="canvas-solution" placeholder="What does your product do?"></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-uvp">
+              <div class="canvas-cell-label">Unique Value Proposition</div>
+              <div class="canvas-cell-hint">Single, clear message that states why you're different.</div>
+              <textarea class="canvas-textarea" id="canvas-uvp" placeholder="Why you, why now?"></textarea>
+            </div>
+          </div>
+
+          <!-- Row 2: Key Metrics | Unfair Advantage | Customer Segments -->
+          <div class="canvas-row">
+            <div class="canvas-cell" id="cell-keyMetrics">
+              <div class="canvas-cell-label">Key Metrics</div>
+              <div class="canvas-cell-hint">Numbers you measure to know you're succeeding.</div>
+              <textarea class="canvas-textarea" id="canvas-keyMetrics" placeholder="What signals matter most?"></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-channels">
+              <div class="canvas-cell-label">Channels</div>
+              <div class="canvas-cell-hint">How do you reach customers? (inbound + outbound)</div>
+              <textarea class="canvas-textarea" id="canvas-channels" placeholder="How will you reach them?"></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-customerSegments">
+              <div class="canvas-cell-label">Customer Segments</div>
+              <div class="canvas-cell-hint">Who are your early adopters? Be specific.</div>
+              <textarea class="canvas-textarea" id="canvas-customerSegments" placeholder="Who is your ideal first customer?"></textarea>
+            </div>
+          </div>
+
+          <!-- Row 3: Cost Structure | Revenue Streams (+ Unfair Advantage inline) -->
+          <div class="canvas-row">
+            <div class="canvas-cell" id="cell-unfairAdvantage">
+              <div class="canvas-cell-label">Unfair Advantage</div>
+              <div class="canvas-cell-hint">Something that cannot easily be bought or copied.</div>
+              <textarea class="canvas-textarea" id="canvas-unfairAdvantage" placeholder="What can only you do?"></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-costStructure">
+              <div class="canvas-cell-label">Cost Structure</div>
+              <div class="canvas-cell-hint">Top fixed + variable costs.</div>
+              <textarea class="canvas-textarea" id="canvas-costStructure" placeholder="Where does the money go?"></textarea>
+            </div>
+            <div class="canvas-cell" id="cell-revenueStreams">
+              <div class="canvas-cell-label">Revenue Streams</div>
+              <div class="canvas-cell-hint">How do you make money? Price point and model.</div>
+              <textarea class="canvas-textarea" id="canvas-revenueStreams" placeholder="How will you charge customers?"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Completeness bar -->
+        <div class="canvas-completeness stagger-3">
+          <span class="text-muted" style="font-size:12px; white-space:nowrap;">Canvas completeness:</span>
+          <div class="canvas-completeness-bar-track">
+            <div class="canvas-completeness-bar-fill" id="canvas-fill-bar" style="width:0%"></div>
+          </div>
+          <span id="canvas-fill-text" style="font-size:12px; font-weight:600; color:var(--color-text-muted); white-space:nowrap;">0 / 9 blocks</span>
+        </div>
+
+      </div><!-- /step-1 -->
+
+      <!-- STEP 2: REVENUE MODEL SELECTOR -->
+      <div class="step-content hidden" id="step-2">
+
+        <div class="card stagger-1">
+          <div class="card-header">
+            <div class="flex-between" style="align-items:flex-start">
+              <div>
+                <div class="card-title">Choose Your Revenue Model</div>
+                <div class="card-subtitle">Select the revenue model that best fits your startup scenario</div>
+              </div>
+              <span class="badge badge-warning">5 pts</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="revenue-model-grid" id="revenue-model-grid">
+              <!-- Rendered by JS -->
+            </div>
+
+            <div class="form-group mt-4">
+              <label class="form-label">Why did you choose this model?</label>
+              <textarea class="form-textarea" id="revenue-justification"
+                        placeholder="Explain why this revenue model fits your scenario — consider your price point, sales process, and customer behavior." rows="3"></textarea>
+              <div class="form-hint">Tip: A 1–2 sentence justification earns partial credit even if your model selection is off.</div>
+            </div>
+
+            <div id="revenue-correct-reveal" class="hidden mt-4">
+              <!-- Correct model reveal shown after submission -->
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /step-2 -->
+
+      <!-- STEP 3: UNIT ECONOMICS CALCULATOR -->
+      <div class="step-content hidden" id="step-3">
+
+        <div class="card stagger-1">
+          <div class="card-header">
+            <div class="flex-between" style="align-items:flex-start">
+              <div>
+                <div class="card-title">Unit Economics Calculator</div>
+                <div class="card-subtitle">Calculate the key metrics that determine if your business model is viable</div>
+              </div>
+              <span class="badge badge-warning">10 pts</span>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <div class="alert alert-info mb-4">
+              <div class="alert-title">Why Unit Economics Matter</div>
+              <div class="alert-body">If LTV:CAC &lt; 3:1, you're spending more to acquire customers than they're worth long-term. If CAC Payback &gt; 12 months, you'll run out of cash before recovering acquisition costs.</div>
+            </div>
+
+            <!-- Inputs -->
+            <div class="calc-grid">
+              <div class="form-group">
+                <label class="form-label">ARPU — Monthly Revenue per Customer</label>
+                <div class="input-prefix-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="calc-arpu" value="149" min="1" step="1">
+                </div>
+                <div class="form-hint">Average monthly recurring revenue per paying customer</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Gross Margin %</label>
+                <input type="number" class="form-input" id="calc-margin" value="72" min="1" max="100" step="1">
+                <div class="form-hint">Revenue minus direct costs (COGS), as a percentage</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Monthly Churn Rate %</label>
+                <input type="number" class="form-input" id="calc-churn" value="3.2" min="0.1" step="0.1">
+                <div class="form-hint">Percentage of customers who cancel each month</div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Customer Acquisition Cost (CAC)</label>
+                <div class="input-prefix-group">
+                  <span class="input-prefix">$</span>
+                  <input type="number" class="form-input" id="calc-cac" value="380" min="1" step="1">
+                </div>
+                <div class="form-hint">Average cost to acquire one paying customer</div>
+              </div>
+            </div>
+
+            <button class="btn btn-secondary w-full mb-4" id="btn-calculate">
+              Calculate Unit Economics →
+            </button>
+
+            <!-- Results -->
+            <div class="calc-result-grid" id="calc-results" style="display:none">
+              <div class="calc-result-card" id="card-ltv">
+                <div class="calc-result-value text-primary" id="result-ltv">$0</div>
+                <div class="calc-result-label">Customer LTV</div>
+                <div id="ltv-status"></div>
+                <div class="calc-result-formula">ARPU × GM% ÷ Churn%</div>
+              </div>
+              <div class="calc-result-card" id="card-ratio">
+                <div class="calc-result-value" id="result-ratio">0:1</div>
+                <div class="calc-result-label">LTV:CAC Ratio</div>
+                <div id="ratio-status"></div>
+                <div class="calc-result-formula">Target: ≥ 3:1</div>
+              </div>
+              <div class="calc-result-card" id="card-payback">
+                <div class="calc-result-value" id="result-payback">0 mo</div>
+                <div class="calc-result-label">CAC Payback Period</div>
+                <div id="payback-status"></div>
+                <div class="calc-result-formula">Target: ≤ 12 months</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div><!-- /step-3 -->
+
+      <!-- FEEDBACK -->
+      <div id="feedback-container" class="mt-4"></div>
+
+      <!-- MODULE NAV -->
+      <div class="module-nav">
+        <button class="btn btn-ghost module-nav-back" id="btn-back">← Back</button>
+        <div class="flex-center gap-4">
+          <span id="step-score-display"></span>
+          <button class="btn btn-primary module-nav-next" id="btn-next">Check Answer →</button>
+        </div>
+      </div>
+
+    </div><!-- /page-wrapper -->
+  </main>
+
+</div><!-- /layout-shell -->
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/modules.js"></script>
+<script>
+/* =========================================================================
+   Module 3 — Business Model Basics
+   Steps: 1 = Lean Canvas  |  2 = Revenue Model  |  3 = Unit Economics
+   ========================================================================= */
+document.addEventListener('DOMContentLoaded', function () {
+
+  /* ── Guards ─────────────────────────────────────────────────────────── */
+  var state = BizSim.getState();
+  if (!state.scenario) {
+    window.location.href = 'index.html';
+    return;
+  }
+  if (!BizSim.canAccessModule(3)) {
+    BizSim.showToast('Complete the previous modules first', 'warning');
+    window.location.href = 'module-2.html';
+    return;
+  }
+
+  BizSim.initSidebar();
+
+  var scenarioId  = state.scenario;
+  var d3          = BizSimData.module3;
+  var defaults    = d3.leanCanvasDefaults[scenarioId] || {};
+  var ueDefaults  = d3.unitEconomicsDefaults[scenarioId] || { arpu: 149, grossMargin: 72, churnRate: 3.2, cac: 380 };
+
+  /* ── Step state ─────────────────────────────────────────────────────── */
+  var currentStep   = 1;
+  var totalSteps    = 3;
+  var stepScores    = { 1: null, 2: null, 3: null };
+  var stepSubmitted = { 1: false, 2: false, 3: false };
+
+  /* Persisted answers */
+  var answers = {
+    canvas:              {},
+    revenueModel:        null,
+    revenueJustification: '',
+    ueArpu:              ueDefaults.arpu,
+    ueMargin:            ueDefaults.grossMargin,
+    ueChurn:             ueDefaults.churnRate,
+    ueCac:               ueDefaults.cac,
+    ueResults:           null,
+  };
+
+  /* ── Step meta ──────────────────────────────────────────────────────── */
+  var stepMeta = {
+    1: { title: 'Lean Canvas Builder',         subtitle: 'Map your startup\'s business model on a single canvas.' },
+    2: { title: 'Revenue Model Selector',      subtitle: 'Choose the revenue model that best fits your business.' },
+    3: { title: 'Unit Economics Calculator',   subtitle: 'Calculate LTV, LTV:CAC ratio, and CAC payback period.' },
+  };
+
+  /* ── Canvas blocks order ────────────────────────────────────────────── */
+  var canvasBlockIds = [
+    'problem', 'solution', 'uvp',
+    'keyMetrics', 'channels', 'customerSegments',
+    'unfairAdvantage', 'costStructure', 'revenueStreams',
+  ];
+
+  /* ── Init UI ─────────────────────────────────────────────────────────── */
+  function init() {
+    prefillCanvas();
+    prefillUnitEconomics();
+    renderRevenueModels();
+    updateSidebarScore();
+    showStep(1);
+  }
+
+  /* ── Canvas ─────────────────────────────────────────────────────────── */
+  function prefillCanvas() {
+    canvasBlockIds.forEach(function (id) {
+      var el = document.getElementById('canvas-' + id);
+      if (!el) return;
+      var val = defaults[id] || '';
+      el.value = val;
+      answers.canvas[id] = val;
+      el.addEventListener('input', function () {
+        answers.canvas[id] = el.value;
+        updateCanvasCompleteness();
+      });
+    });
+    updateCanvasCompleteness();
+  }
+
+  function updateCanvasCompleteness() {
+    var filled = canvasBlockIds.filter(function (id) {
+      var v = answers.canvas[id] || '';
+      return v.trim().split(/\s+/).length >= 5;
+    }).length;
+    var pct = Math.round((filled / 9) * 100);
+    var bar = document.getElementById('canvas-fill-bar');
+    var txt = document.getElementById('canvas-fill-text');
+    if (bar) bar.style.width = pct + '%';
+    if (txt) txt.textContent = filled + ' / 9 blocks';
+    if (bar) {
+      bar.style.background = filled >= 7 ? 'var(--color-success)'
+                            : filled >= 4 ? 'var(--color-warning)'
+                            : 'var(--color-primary)';
+    }
+  }
+
+  /* ── Revenue models ─────────────────────────────────────────────────── */
+  function renderRevenueModels() {
+    var grid = document.getElementById('revenue-model-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    d3.revenueModels.forEach(function (m) {
+      var card = document.createElement('div');
+      card.className = 'revenue-model-card';
+      card.dataset.modelId = m.id;
+      card.innerHTML =
+        '<div class="revenue-model-icon">' + m.icon + '</div>' +
+        '<div class="revenue-model-label">' + m.label + '</div>' +
+        '<div class="revenue-model-desc">' + m.desc + '</div>' +
+        '<div class="revenue-model-best">Best for: ' + m.bestFor + '</div>';
+      card.addEventListener('click', function () {
+        if (stepSubmitted[2]) return;
+        document.querySelectorAll('.revenue-model-card').forEach(function (c) {
+          c.classList.remove('selected');
+        });
+        card.classList.add('selected');
+        answers.revenueModel = m.id;
+      });
+      grid.appendChild(card);
+    });
+
+    /* Restore prior selection */
+    if (answers.revenueModel) {
+      var sel = grid.querySelector('[data-model-id="' + answers.revenueModel + '"]');
+      if (sel) sel.classList.add('selected');
+    }
+
+    /* Textarea */
+    var ta = document.getElementById('revenue-justification');
+    if (ta) {
+      ta.addEventListener('input', function () {
+        answers.revenueJustification = ta.value;
+      });
+    }
+  }
+
+  /* ── Unit economics prefill ─────────────────────────────────────────── */
+  function prefillUnitEconomics() {
+    setInputVal('calc-arpu',   ueDefaults.arpu);
+    setInputVal('calc-margin', ueDefaults.grossMargin);
+    setInputVal('calc-churn',  ueDefaults.churnRate);
+    setInputVal('calc-cac',    ueDefaults.cac);
+
+    ['calc-arpu', 'calc-margin', 'calc-churn', 'calc-cac'].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', function () {
+          answers['ue' + capitalize(id.replace('calc-', ''))] = parseFloat(el.value) || 0;
+          /* Hide results if inputs change after a calculation */
+          var results = document.getElementById('calc-results');
+          if (results && !stepSubmitted[3]) {
+            results.style.display = 'none';
+            answers.ueResults = null;
+          }
+        });
+      }
+    });
+
+    document.getElementById('btn-calculate').addEventListener('click', runCalculation);
+  }
+
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  function setInputVal(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.value = val;
+  }
+
+  function runCalculation() {
+    var arpu   = parseFloat(document.getElementById('calc-arpu').value)   || 0;
+    var margin = parseFloat(document.getElementById('calc-margin').value) || 0;
+    var churn  = parseFloat(document.getElementById('calc-churn').value)  || 0.1;
+    var cac    = parseFloat(document.getElementById('calc-cac').value)    || 0;
+
+    var result = BizSimModules.calcUnitEconomics(arpu, margin, churn, cac);
+    answers.ueResults = result;
+
+    /* Populate display */
+    document.getElementById('result-ltv').textContent     = '$' + result.ltv.toLocaleString();
+    document.getElementById('result-ratio').textContent   = result.ltvCacRatio + ':1';
+    document.getElementById('result-payback').textContent = (result.cacPaybackMonths !== null ? result.cacPaybackMonths : '∞') + ' mo';
+
+    applyResultStatus('card-ltv',     'ltv-status',     result.ltvStatus);
+    applyResultStatus('card-ratio',   'ratio-status',   result.ratioStatus);
+    applyResultStatus('card-payback', 'payback-status', result.paybackStatus);
+
+    /* Colour the ratio value */
+    var ratioEl = document.getElementById('result-ratio');
+    if (ratioEl) {
+      ratioEl.style.color = result.ratioStatus === 'success' ? 'var(--color-success)'
+                          : result.ratioStatus === 'warning' ? 'var(--color-warning)'
+                          : 'var(--color-danger)';
+    }
+
+    var resultsEl = document.getElementById('calc-results');
+    resultsEl.style.display = 'grid';
+    resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function applyResultStatus(cardId, statusId, status) {
+    var card   = document.getElementById(cardId);
+    var badge  = document.getElementById(statusId);
+    var labels = { success: 'Healthy ✓', warning: 'Marginal ⚠', danger: 'Unsustainable ✕' };
+
+    if (card) {
+      card.classList.remove('status-success', 'status-warning', 'status-danger');
+      card.classList.add('status-' + status);
+    }
+    if (badge) {
+      badge.innerHTML = '<span class="badge badge-' + status + '">' + (labels[status] || status) + '</span>';
+    }
+  }
+
+  /* ── Step management ────────────────────────────────────────────────── */
+  function showStep(n) {
+    currentStep = n;
+
+    /* Update step indicator */
+    BizSim.initStepIndicator(totalSteps, n);
+
+    /* Show/hide content panes */
+    for (var i = 1; i <= totalSteps; i++) {
+      var el = document.getElementById('step-' + i);
+      if (el) {
+        if (i === n) {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+        }
+      }
+    }
+
+    /* Update header */
+    var meta = stepMeta[n];
+    if (meta) {
+      var t = document.getElementById('step-title');
+      var s = document.getElementById('step-subtitle');
+      if (t) t.textContent = meta.title;
+      if (s) s.textContent = meta.subtitle;
+    }
+
+    /* Update nav buttons */
+    var btnBack = document.getElementById('btn-back');
+    var btnNext = document.getElementById('btn-next');
+
+    if (btnBack) {
+      if (n === 1) {
+        btnBack.textContent = '← Back to Module 2';
+        btnBack.onclick = function () { window.location.href = 'module-2.html'; };
+      } else {
+        btnBack.textContent = '← Back';
+        btnBack.onclick = goBack;
+      }
+    }
+
+    if (btnNext) {
+      if (stepSubmitted[n]) {
+        if (n === totalSteps) {
+          btnNext.textContent = 'Continue to Module 4 →';
+          btnNext.classList.remove('btn-primary');
+          btnNext.classList.add('btn-primary');
+        } else {
+          btnNext.textContent = 'Next Step →';
+        }
+      } else {
+        if (n === 3) {
+          btnNext.textContent = 'Analyze My Unit Economics →';
+        } else {
+          btnNext.textContent = 'Check Answer →';
+        }
+      }
+    }
+
+    /* Update score display */
+    updateStepScoreDisplay();
+
+    /* Clear feedback unless already submitted */
+    if (!stepSubmitted[n]) {
+      var fc = document.getElementById('feedback-container');
+      if (fc) fc.innerHTML = '';
+    }
+  }
+
+  function updateStepScoreDisplay() {
+    var el = document.getElementById('step-score-display');
+    if (!el) return;
+    if (stepScores[currentStep] !== null) {
+      el.innerHTML = '<span class="step-score-pill">Step score: ' + stepScores[currentStep] + ' pts</span>';
+    } else {
+      el.innerHTML = '';
+    }
+  }
+
+  function updateSidebarScore() {
+    var total = BizSim.getTotalScore();
+    var sidebarNum = document.getElementById('sidebar-score');
+    if (sidebarNum) sidebarNum.textContent = total;
+    BizSim.updateHealthRing(total);
+  }
+
+  /* ── Back ───────────────────────────────────────────────────────────── */
+  function goBack() {
+    if (currentStep > 1) {
+      showStep(currentStep - 1);
+    }
+  }
+
+  /* ── Next / Check Answer ────────────────────────────────────────────── */
+  document.getElementById('btn-next').addEventListener('click', function () {
+    if (stepSubmitted[currentStep]) {
+      /* Already checked — advance */
+      if (currentStep < totalSteps) {
+        showStep(currentStep + 1);
+      } else {
+        finishModule();
+      }
+      return;
+    }
+
+    /* Submit & score current step */
+    switch (currentStep) {
+      case 1: submitCanvas();       break;
+      case 2: submitRevenueModel(); break;
+      case 3: submitUnitEconomics(); break;
+    }
+  });
+
+  /* ── Step 1: Canvas submit ──────────────────────────────────────────── */
+  function submitCanvas() {
+    var score = BizSimModules.scoreCanvas(answers.canvas);
+    stepScores[1] = score;
+    stepSubmitted[1] = true;
+
+    var filledCount = canvasBlockIds.filter(function (id) {
+      var v = answers.canvas[id] || '';
+      return v.trim().split(/\s+/).length >= 5;
+    }).length;
+
+    var correct = filledCount >= 7;
+    var title   = correct ? 'Canvas Complete!' : filledCount >= 5 ? 'Good Start' : 'Needs More Detail';
+    var expl    = 'You filled ' + filledCount + ' of 9 blocks with meaningful content. '
+      + (correct
+        ? 'A well-populated canvas shows a coherent business model at a glance.'
+        : 'Try to fill all 9 blocks — each one forces you to make an explicit assumption you can later test.');
+
+    BizSim.showFeedback('feedback-container', {
+      correct:     correct,
+      points:      score,
+      title:       title,
+      explanation: expl,
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'Next Step →';
+  }
+
+  /* ── Step 2: Revenue model submit ──────────────────────────────────── */
+  function submitRevenueModel() {
+    var selected = answers.revenueModel;
+    if (!selected) {
+      BizSim.showToast('Please select a revenue model first', 'warning');
+      return;
+    }
+
+    var correct = d3.correctRevenueModel[scenarioId];
+    var isCorrect = selected === correct;
+    var justification = (answers.revenueJustification || '').trim();
+    var wordCount = justification.split(/\s+/).filter(Boolean).length;
+
+    var score;
+    if (isCorrect) {
+      score = 5;
+    } else if (wordCount >= 30) {
+      score = 3;
+    } else {
+      score = 1;
+    }
+
+    stepScores[2] = score;
+    stepSubmitted[2] = true;
+
+    /* Reveal correct model */
+    var correctModel = d3.revenueModels.find(function (m) { return m.id === correct; });
+    var justText = d3.revenueModelJustifications[scenarioId] || '';
+
+    var revealEl = document.getElementById('revenue-correct-reveal');
+    if (revealEl) {
+      revealEl.classList.remove('hidden');
+      revealEl.innerHTML =
+        '<div class="alert ' + (isCorrect ? 'alert-success' : 'alert-warning') + '">' +
+          '<div class="alert-title">' +
+            (isCorrect ? '✓ That\'s the right model!' : 'The best model for this scenario is: ' + (correctModel ? correctModel.label : correct)) +
+          '</div>' +
+          '<div class="alert-body">' + justText + '</div>' +
+        '</div>';
+    }
+
+    /* Highlight correct/wrong cards */
+    document.querySelectorAll('.revenue-model-card').forEach(function (card) {
+      var id = card.dataset.modelId;
+      card.style.cursor = 'default';
+      if (id === correct) card.classList.add('correct-reveal');
+      if (id === selected && id !== correct) card.classList.add('wrong-reveal');
+    });
+
+    BizSim.showFeedback('feedback-container', {
+      correct:     isCorrect,
+      points:      score,
+      title:       isCorrect ? 'Correct Revenue Model!' : 'Not quite — but good thinking.',
+      explanation: isCorrect
+        ? justText
+        : 'The optimal model for this scenario is ' + (correctModel ? correctModel.label : correct) + '. ' + justText,
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'Next Step →';
+  }
+
+  /* ── Step 3: Unit economics submit ─────────────────────────────────── */
+  function submitUnitEconomics() {
+    /* Require calculation to have been run */
+    if (!answers.ueResults) {
+      BizSim.showToast('Click "Calculate Unit Economics" first', 'warning');
+      return;
+    }
+
+    var result = answers.ueResults;
+    var score  = result.score;
+    stepScores[3] = score;
+    stepSubmitted[3] = true;
+
+    var ratio = result.ltvCacRatio;
+    var isStrong = ratio >= 3;
+
+    var title = isStrong
+      ? 'Strong Unit Economics!'
+      : ratio >= 2 ? 'Marginal — Watch Closely'
+      : ratio >= 1 ? 'Weak — Model Needs Work'
+      : 'Unsustainable Model';
+
+    var expl = 'Your LTV:CAC ratio is ' + ratio + ':1. '
+      + (isStrong
+        ? 'A ratio ≥ 3:1 is the gold standard for SaaS businesses. You\'re spending to acquire customers efficiently.'
+        : ratio >= 2
+          ? 'You\'re close — consider increasing ARPU, reducing churn, or lowering CAC to hit the 3:1 target.'
+          : 'A ratio below 2:1 suggests your acquisition costs are eating your margin. Revisit pricing or channel strategy.');
+
+    BizSim.showFeedback('feedback-container', {
+      correct:     isStrong,
+      points:      score,
+      title:       title,
+      explanation: expl,
+    });
+
+    updateStepScoreDisplay();
+    var btnNext = document.getElementById('btn-next');
+    if (btnNext) btnNext.textContent = 'Complete Module 3 →';
+  }
+
+  /* ── Finish module ──────────────────────────────────────────────────── */
+  function finishModule() {
+    var totalScore = (stepScores[1] || 0) + (stepScores[2] || 0) + (stepScores[3] || 0);
+
+    BizSim.completeModule(3, totalScore, {
+      canvas:        answers.canvas,
+      revenueModel:  answers.revenueModel,
+      ueResults:     answers.ueResults,
+    });
+
+    BizSim.showToast('Module 3 complete! +' + totalScore + ' points', 'success');
+    updateSidebarScore();
+
+    setTimeout(function () {
+      BizSim.goToNextModule(3);
+    }, 800);
+  }
+
+  /* ── Boot ───────────────────────────────────────────────────────────── */
+  init();
+});
+</script>
+</body>
+</html>
