@@ -16,7 +16,7 @@
       industry: 'B2B SaaS — Restaurant Tech',
       description:
         'A SaaS platform helping independent restaurant owners track inventory in real-time, predict waste, and optimize ordering — saving 15–20% on food costs.',
-      color: '#F97316',
+      color: '#f1be32',
       difficulty: 'Intermediate',
       icon: '🍽️',
     },
@@ -27,7 +27,7 @@
       industry: 'Consumer Health Tech',
       description:
         "A mobile app helping adult children monitor elderly parents' medication adherence, vitals, and appointment scheduling — with family-wide visibility.",
-      color: '#10B981',
+      color: '#acd157',
       difficulty: 'Beginner',
       icon: '🏥',
     },
@@ -38,7 +38,7 @@
       industry: 'Developer Tools — B2B SaaS',
       description:
         'An async code review platform with AI-powered context summaries, built for distributed engineering teams across time zones.',
-      color: '#8B5CF6',
+      color: '#dbb8ff',
       difficulty: 'Advanced',
       icon: '💻',
     },

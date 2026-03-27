@@ -135,9 +135,9 @@
   animation-delay: 0.3s;
 }
 
-.score-ring-fill.ring-success { stroke: #10B981; }
-.score-ring-fill.ring-warning { stroke: #F59E0B; }
-.score-ring-fill.ring-danger  { stroke: #EF4444; }
+.score-ring-fill.ring-success { stroke: #acd157; }
+.score-ring-fill.ring-warning { stroke: #f1be32; }
+.score-ring-fill.ring-danger  { stroke: #ffadad; }
 
 
 /* ==========================================================================
@@ -146,10 +146,10 @@
 
 @keyframes pulse {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+    box-shadow: 0 0 0 0 rgba(153, 201, 255, 0.28);
   }
   50% {
-    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0);
+    box-shadow: 0 0 0 6px rgba(153, 201, 255, 0);
   }
 }
 
@@ -233,16 +233,16 @@
   animation: confetti-fall 0.8s ease-out forwards;
 }
 
-.confetti-particle:nth-child(1)  { background-color: #3B82F6; left: 10%; top: 20%; animation-delay: 0.00s; animation-duration: 0.90s; }
-.confetti-particle:nth-child(2)  { background-color: #10B981; left: 20%; top: 10%; animation-delay: 0.08s; animation-duration: 0.75s; width: 6px; height: 6px; }
-.confetti-particle:nth-child(3)  { background-color: #F59E0B; left: 35%; top: 15%; animation-delay: 0.12s; animation-duration: 1.00s; border-radius: 50%; }
-.confetti-particle:nth-child(4)  { background-color: #EF4444; left: 50%; top:  5%; animation-delay: 0.04s; animation-duration: 0.85s; width: 10px; height: 10px; }
-.confetti-particle:nth-child(5)  { background-color: #8B5CF6; left: 65%; top: 18%; animation-delay: 0.16s; animation-duration: 0.70s; }
-.confetti-particle:nth-child(6)  { background-color: #EC4899; left: 75%; top:  8%; animation-delay: 0.02s; animation-duration: 0.95s; width: 6px; height: 6px; border-radius: 50%; }
-.confetti-particle:nth-child(7)  { background-color: #06B6D4; left: 85%; top: 22%; animation-delay: 0.10s; animation-duration: 0.80s; }
-.confetti-particle:nth-child(8)  { background-color: #F97316; left: 42%; top: 28%; animation-delay: 0.20s; animation-duration: 0.65s; width: 10px; height: 4px; }
-.confetti-particle:nth-child(9)  { background-color: #A3E635; left: 58%; top: 12%; animation-delay: 0.06s; animation-duration: 1.10s; border-radius: 50%; }
-.confetti-particle:nth-child(10) { background-color: #FDE047; left: 28%; top: 25%; animation-delay: 0.14s; animation-duration: 0.78s; width: 7px; height: 7px; }
+.confetti-particle:nth-child(1)  { background-color: #99c9ff; left: 10%; top: 20%; animation-delay: 0.00s; animation-duration: 0.90s; }
+.confetti-particle:nth-child(2)  { background-color: #acd157; left: 20%; top: 10%; animation-delay: 0.08s; animation-duration: 0.75s; width: 6px; height: 6px; }
+.confetti-particle:nth-child(3)  { background-color: #f1be32; left: 35%; top: 15%; animation-delay: 0.12s; animation-duration: 1.00s; border-radius: 50%; }
+.confetti-particle:nth-child(4)  { background-color: #ffadad; left: 50%; top:  5%; animation-delay: 0.04s; animation-duration: 0.85s; width: 10px; height: 10px; }
+.confetti-particle:nth-child(5)  { background-color: #dbb8ff; left: 65%; top: 18%; animation-delay: 0.16s; animation-duration: 0.70s; }
+.confetti-particle:nth-child(6)  { background-color: #ffadad; left: 75%; top:  8%; animation-delay: 0.02s; animation-duration: 0.95s; width: 6px; height: 6px; border-radius: 50%; }
+.confetti-particle:nth-child(7)  { background-color: #99c9ff; left: 85%; top: 22%; animation-delay: 0.10s; animation-duration: 0.80s; }
+.confetti-particle:nth-child(8)  { background-color: #f1be32; left: 42%; top: 28%; animation-delay: 0.20s; animation-duration: 0.65s; width: 10px; height: 4px; }
+.confetti-particle:nth-child(9)  { background-color: #acd157; left: 58%; top: 12%; animation-delay: 0.06s; animation-duration: 1.10s; border-radius: 50%; }
+.confetti-particle:nth-child(10) { background-color: #dbb8ff; left: 28%; top: 25%; animation-delay: 0.14s; animation-duration: 0.78s; width: 7px; height: 7px; }
 
 
 /* ==========================================================================

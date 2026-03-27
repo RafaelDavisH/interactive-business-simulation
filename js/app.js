@@ -412,11 +412,11 @@
 
       // Color the ring based on score bracket
       if (clamped >= 75) {
-        ring.style.stroke = '#10B981'; // green
+        ring.style.stroke = '#acd157'; // green-light (fCC)
       } else if (clamped >= 50) {
-        ring.style.stroke = '#F59E0B'; // amber
+        ring.style.stroke = '#f1be32'; // yellow (fCC)
       } else {
-        ring.style.stroke = '#EF4444'; // red
+        ring.style.stroke = '#ffadad'; // red-light (fCC)
       }
     }
 
@@ -532,10 +532,10 @@
       '  transform: translateY(0);',
       '  opacity: 1;',
       '}',
-      '.bizsim-toast--success { background: #D1FAE5; color: #065F46; border-left: 4px solid #10B981; }',
-      '.bizsim-toast--warning { background: #FEF3C7; color: #92400E; border-left: 4px solid #F59E0B; }',
-      '.bizsim-toast--danger  { background: #FEE2E2; color: #991B1B; border-left: 4px solid #EF4444; }',
-      '.bizsim-toast--info    { background: #DBEAFE; color: #1E40AF; border-left: 4px solid #3B82F6; }',
+      '.bizsim-toast--success { background: #1b1b32; color: #acd157; border-left: 4px solid #acd157; }',
+      '.bizsim-toast--warning { background: #1b1b32; color: #f1be32; border-left: 4px solid #f1be32; }',
+      '.bizsim-toast--danger  { background: #1b1b32; color: #ffadad; border-left: 4px solid #ffadad; }',
+      '.bizsim-toast--info    { background: #1b1b32; color: #99c9ff; border-left: 4px solid #99c9ff; }',
       '.bizsim-toast__icon { font-size: 1rem; flex-shrink: 0; }',
       '.bizsim-toast__message { flex: 1; line-height: 1.4; }',
       '.bizsim-toast__close {',
@@ -611,8 +611,8 @@
       '  from { opacity: 0; transform: translateY(6px); }',
       '  to   { opacity: 1; transform: translateY(0); }',
       '}',
-      '.feedback-alert--success { background: #D1FAE5; border-left: 4px solid #10B981; color: #065F46; }',
-      '.feedback-alert--danger  { background: #FEE2E2; border-left: 4px solid #EF4444; color: #991B1B; }',
+      '.feedback-alert--success { background: rgba(172, 209, 87, 0.1); border-left: 4px solid #acd157; color: #acd157; }',
+      '.feedback-alert--danger  { background: rgba(255, 173, 173, 0.1); border-left: 4px solid #ffadad; color: #ffadad; }',
       '.feedback-alert__header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }',
       '.feedback-alert__icon { font-size: 1rem; font-weight: 700; flex-shrink: 0; }',
       '.feedback-alert__title { font-size: 0.95rem; font-weight: 700; flex: 1; }',
