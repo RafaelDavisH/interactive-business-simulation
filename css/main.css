@@ -28,8 +28,8 @@
   --color-danger:          #ffadad;   /* red-light: errors / destructive    */
   --color-danger-glow:     rgba(255, 173, 173, 0.12);
   --color-text:            #f5f6f7;   /* gray-05: primary foreground        */
-  --color-text-muted:      #858591;   /* gray-45: muted text                */
-  --color-text-subtle:     #5a5a6e;   /* between gray-45 and gray-75        */
+  --color-text-muted:      #b8b8c4;   /* 7:1+ contrast on all dark surfaces  */
+  --color-text-subtle:     #a8a8b8;   /* 7:1+ on bg/surface, 6:1 on surface-2 */
   --color-sidebar:         #0a0a23;   /* gray-90: sidebar background        */
   --color-sidebar-active:  #1b1b32;   /* gray-85: active nav item           */
   --color-focus:           #198eee;   /* blue-mid: focus ring (all elements) */
@@ -466,42 +466,52 @@ hr {
 }
 
 .step-dot {
-  width: 8px;
-  height: 8px;
+  width: 28px;
+  height: 28px;
   border-radius: var(--radius-full);
   background-color: var(--color-surface);
   border: 2px solid var(--color-border);
   flex-shrink: 0;
   transition: all 0.2s ease;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.step-dot span {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-text-muted);
+  font-family: var(--font-mono, monospace);
 }
 
 .step-dot.active,
 .step-dot--active {
-  width: 12px;
-  height: 12px;
+  width: 28px;
+  height: 28px;
   background-color: var(--color-primary);
   border-color: var(--color-primary);
+}
+
+.step-dot.active span,
+.step-dot--active span {
+  color: #fff;
 }
 
 .step-dot.done,
 .step-dot--done {
   background-color: var(--color-success);
   border-color: var(--color-success);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 12px;
-  height: 12px;
+  width: 28px;
+  height: 28px;
 }
 
-.step-dot.done::after,
-.step-dot--done::after {
-  content: '✓';
-  font-size: 7px;
-  color: var(--color-bg);
-  font-weight: 800;
-  line-height: 1;
+.step-dot.done span,
+.step-dot--done span {
+  color: #fff;
 }
 
 .step-dot--upcoming {
@@ -798,7 +808,7 @@ hr {
 
 .tag-btn.active {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-bg);
   border-color: var(--color-primary);
 }
 
@@ -1676,7 +1686,7 @@ hr {
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  color: #fff;
+  color: var(--color-bg);
   font-weight: 800;
   box-shadow: var(--shadow-glow-primary);
 }
@@ -1961,7 +1971,7 @@ hr {
   align-items: center;
   gap: var(--space-2);
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-bg);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -2176,7 +2186,7 @@ hr {
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: #fff;
+  color: var(--color-bg);
   font-weight: 700;
   flex-shrink: 0;
 }
